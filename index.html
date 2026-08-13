@@ -1,0 +1,771 @@
+﻿<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Expert Build Solution (Pvt) Ltd - Enterprise Construction & Shareholder ERP</title>
+    
+    <!-- Google Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS & FontAwesome -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Identity Services (GIS) API -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <style>
+        :root {
+            --brand-gold: #f59e0b;
+            --brand-cyan: #06b6d4;
+            --brand-purple: #8b5cf6;
+            --brand-emerald: #10b981;
+            --brand-rose: #f43f5e;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', 'Noto Sans Sinhala', sans-serif;
+            background: #020617;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(245, 158, 11, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.12) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: #f8fafc;
+            min-height: 100vh;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .erp-card {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        .neo-input {
+            background: rgba(30, 41, 59, 0.9) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            color: #f8fafc !important;
+            transition: all 0.25s ease;
+        }
+        .neo-input:focus {
+            border-color: var(--brand-gold) !important;
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.35) !important;
+            outline: none !important;
+        }
+
+        .tab-btn {
+            padding: 10px 18px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            color: #94a3b8;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--brand-gold), #d97706);
+            color: #030712;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+        }
+
+        .table-scroll-container { max-height: 480px; overflow-y: auto; }
+        .table-scroll-container th { position: sticky; top: 0; z-index: 20; background-color: #0f172a; }
+
+        #syncBadge { font-size: 0.72rem; padding: 4px 10px; border-radius: 8px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px; }
+        .sync-success { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4); }
+        .sync-loading { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; padding: 0 !important; }
+            .erp-card { background: white !important; border: 1px solid #000 !important; box-shadow: none !important; color: black !important; border-radius: 0 !important; }
+            th, td { border: 1px solid #000 !important; color: black !important; }
+        }
+    </style>
+</head>
+<body class="p-3 sm:p-6 flex flex-col justify-between">
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-xl">
+        <div class="w-full max-w-md erp-card p-8 text-center space-y-6 border border-amber-500/30">
+            <div class="w-20 h-20 bg-gradient-to-tr from-amber-400 to-orange-600 rounded-2xl flex items-center justify-center mx-auto shadow-xl shadow-amber-500/20 animate-bounce">
+                <i class="fas fa-building text-3xl text-slate-950"></i>
+            </div>
+            <div>
+                <h2 class="text-xl font-black text-white tracking-tight">EXPERT BUILD SOLUTION</h2>
+                <p class="text-xs text-amber-400 font-bold mt-1">(Pvt) Ltd - Enterprise ERP OS Pro</p>
+            </div>
+
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <input type="password" id="pin-input" placeholder="••••" maxlength="6" class="w-full text-center text-2xl tracking-[10px] font-mono rounded-xl p-3.5 neo-input" required autofocus>
+                    <p id="login-error" class="text-xs text-rose-400 font-bold mt-2 hidden"><i class="fas fa-triangle-exclamation"></i> වැරදි PIN අංකයකි!</p>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-slate-950 font-extrabold py-3.5 rounded-xl text-sm transition shadow-lg shadow-amber-500/20">
+                    <i class="fas fa-key"></i> Unlock Enterprise OS
+                </button>
+            </form>
+            
+            <div class="pt-4 border-t border-slate-800 text-[10px] text-slate-500">
+                <p>Default PIN: <strong class="text-amber-400">1234</strong></p>
+                <p class="mt-1">© 2026 <strong>Expert Build Solution (Pvt) Ltd</strong>. All Rights Reserved.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP SCREEN -->
+    <div id="app-screen" class="max-w-7xl mx-auto space-y-6 w-full hidden">
+        
+        <!-- HEADER -->
+        <header class="erp-card p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 no-print">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-gradient-to-tr from-amber-400 to-orange-600 rounded-xl flex items-center justify-center text-slate-950 font-black text-xl shadow-lg">
+                    EBS
+                </div>
+                <div>
+                    <h1 class="text-xl font-black text-white tracking-tight flex items-center gap-2">
+                        Expert Build Solution (Pvt) Ltd
+                        <span id="syncBadge" class="sync-loading"><i class="fa-solid fa-cloud-arrow-up"></i> Syncing...</span>
+                    </h1>
+                    <p class="text-xs text-amber-400 font-medium">Construction Enterprise ERP & Shareholders Management System</p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+                <button onclick="requestGoogleDriveAccess()" class="bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 transition">
+                    <i class="fab fa-google-drive text-amber-400"></i> Sync Drive
+                </button>
+                <button onclick="changePIN()" class="bg-slate-800 text-slate-300 border border-slate-700 font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 transition">
+                    <i class="fas fa-key text-amber-400"></i> PIN
+                </button>
+                <button onclick="window.print()" class="bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition">
+                    <i class="fas fa-print"></i> Print Executive Report
+                </button>
+                <button onclick="clearAllData()" class="bg-rose-500/20 text-rose-300 border border-rose-500/30 font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 transition">
+                    <i class="fas fa-trash-alt"></i> Reset
+                </button>
+                <button onclick="logout()" class="bg-slate-800 text-slate-300 border border-slate-700 font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 transition">
+                    <i class="fas fa-lock text-rose-400"></i> Lock
+                </button>
+            </div>
+        </header>
+
+        <!-- NAVIGATION TABS -->
+        <div class="flex flex-wrap gap-2 erp-card p-2 no-print">
+            <button class="tab-btn active" onclick="switchTab('tab-dashboard', this)"><i class="fas fa-chart-line"></i> Executive Dashboard</button>
+            <button class="tab-btn" onclick="switchTab('tab-shareholders', this)"><i class="fas fa-users font-bold"></i> 7 Shareholders & Shares</button>
+            <button class="tab-btn" onclick="switchTab('tab-projects', this)"><i class="fas fa-city"></i> Project Management</button>
+            <button class="tab-btn" onclick="switchTab('tab-contractors', this)"><i class="fas fa-hard-hat"></i> Contractors & Suppliers</button>
+        </div>
+
+        <!-- TAB 1: EXECUTIVE DASHBOARD -->
+        <div id="tab-dashboard" class="tab-content space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                <div class="erp-card p-5 border-l-4 border-l-amber-400">
+                    <span class="text-xs font-bold uppercase text-slate-400 tracking-wider">Total Share Capital</span>
+                    <div class="text-2xl font-black text-amber-400 font-mono mt-1">Rs. <span id="dash-capital">0.00</span></div>
+                    <p class="text-[11px] text-slate-500 mt-1">හවුල්කරුවන් 7 දෙනා තැන්පත් කළ මුදල</p>
+                </div>
+                <div class="erp-card p-5 border-l-4 border-l-rose-400">
+                    <span class="text-xs font-bold uppercase text-slate-400 tracking-wider">Total Project Expenses</span>
+                    <div class="text-2xl font-black text-rose-400 font-mono mt-1">Rs. <span id="dash-expenses">0.00</span></div>
+                    <p class="text-[11px] text-slate-500 mt-1">සියලුම Projects වල මුළු වියදම</p>
+                </div>
+                <div class="erp-card p-5 border-l-4 border-l-purple-400">
+                    <span class="text-xs font-bold uppercase text-slate-400 tracking-wider">Supplier Liabilities</span>
+                    <div class="text-2xl font-black text-purple-400 font-mono mt-1">Rs. <span id="dash-payables">0.00</span></div>
+                    <p class="text-[11px] text-slate-500 mt-1">ගෙවීමට ඇති සැපයුම්කරු හිඟ මුදල්</p>
+                </div>
+                <div class="erp-card p-5 border-l-4 border-l-emerald-400">
+                    <span class="text-xs font-bold uppercase text-slate-400 tracking-wider">Net Profit / Dividend Fund</span>
+                    <div class="text-2xl font-black text-emerald-400 font-mono mt-1">Rs. <span id="dash-profit">0.00</span></div>
+                    <p class="text-[11px] text-slate-500 mt-1">ලබාගත හැකි ශුද්ධ ලාභය</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-6 erp-card p-6">
+                    <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fas fa-pie-chart text-amber-400"></i> 7 Shareholders Investment Breakdown</h3>
+                    <div class="relative h-64 flex items-center justify-center">
+                        <canvas id="shareChart"></canvas>
+                    </div>
+                </div>
+                <div class="lg:col-span-6 erp-card p-6 space-y-4">
+                    <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fas fa-building-circle-check text-cyan-400"></i> Corporate Summary</h3>
+                    <div class="space-y-3 text-xs">
+                        <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex justify-between">
+                            <span class="text-slate-400">Registered Company:</span>
+                            <span class="text-amber-400 font-bold">Expert Build Solution (Pvt) Ltd</span>
+                        </div>
+                        <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex justify-between">
+                            <span class="text-slate-400">Active Partners / Directors:</span>
+                            <span class="text-white font-bold">7 Key Shareholders</span>
+                        </div>
+                        <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex justify-between">
+                            <span class="text-slate-400">Active Construction Projects:</span>
+                            <span class="text-emerald-400 font-bold"><span id="dash-project-count">0</span> Active Projects</span>
+                        </div>
+                        <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex justify-between">
+                            <span class="text-slate-400">Security Architecture:</span>
+                            <span class="text-purple-400 font-bold">Encrypted Local & Drive Sync</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: 7 SHAREHOLDERS MANAGEMENT -->
+        <div id="tab-shareholders" class="tab-content hidden space-y-6">
+            <div class="erp-card p-6 space-y-4">
+                <div class="border-b border-slate-700/60 pb-3 flex justify-between items-center">
+                    <h2 class="text-base font-bold text-white flex items-center gap-2"><i class="fas fa-users text-amber-400"></i> 7 Shareholders Capital & Share Distribution</h2>
+                    <span class="text-xs bg-slate-800 text-amber-400 px-3 py-1 rounded-md font-bold">Expert Build Solution Equity Engine</span>
+                </div>
+
+                <div class="table-scroll-container">
+                    <table class="w-full text-left border-collapse min-w-[650px]">
+                        <thead>
+                            <tr class="bg-slate-900 text-slate-400 text-xs uppercase font-bold border-b border-slate-700">
+                                <th class="p-3">Shareholder / Partner Name</th>
+                                <th class="p-3 text-right">Invested Capital (Rs)</th>
+                                <th class="p-3 text-right">Share Percentage (%)</th>
+                                <th class="p-3 text-right">Expected Profit Share (Rs)</th>
+                                <th class="p-3 text-center no-print">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="shareholder-table-body" class="text-xs divide-y divide-slate-800"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: PROJECT MANAGEMENT -->
+        <div id="tab-projects" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Add Project Form -->
+                <div class="lg:col-span-5 no-print erp-card p-6 space-y-4">
+                    <h2 class="text-base font-bold text-white border-b border-slate-700/60 pb-3 flex items-center gap-2"><i class="fas fa-folder-plus text-cyan-400"></i> Add New Construction Project</h2>
+                    <form id="project-form" class="space-y-3.5">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Project Title / Location</label>
+                            <input type="text" id="pTitle" placeholder="e.g. Luxury Villa - Kandy Road" class="w-full rounded-xl p-3 text-xs neo-input" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Contract Value (Rs)</label>
+                            <input type="number" id="pValue" min="0" step="any" placeholder="Total Project Income" class="w-full rounded-xl p-3 text-xs font-mono neo-input" required>
+                        </div>
+                        <button type="submit" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-black py-3 rounded-xl text-xs">
+                            <i class="fas fa-plus-circle"></i> Create Project
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Projects List -->
+                <div class="lg:col-span-7 erp-card p-6 space-y-4">
+                    <h2 class="text-base font-bold text-white border-b border-slate-700/60 pb-3 flex items-center gap-2"><i class="fas fa-list-check text-emerald-400"></i> Active Projects Summary</h2>
+                    <div class="table-scroll-container">
+                        <table class="w-full text-left border-collapse min-w-[500px]">
+                            <thead>
+                                <tr class="bg-slate-900 text-slate-400 text-xs uppercase font-bold border-b border-slate-700">
+                                    <th class="p-3">Project Title</th>
+                                    <th class="p-3 text-right">Contract Value</th>
+                                    <th class="p-3 text-right">Spent Expenses</th>
+                                    <th class="p-3 text-right">Project Profit</th>
+                                    <th class="p-3 text-center no-print">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="project-table-body" class="text-xs divide-y divide-slate-800"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: CONTRACTORS & SUPPLIERS PAYMENTS -->
+        <div id="tab-contractors" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Payment / Expense Entry Form -->
+                <div class="lg:col-span-5 no-print erp-card p-6 space-y-4">
+                    <h2 class="text-base font-bold text-white border-b border-slate-700/60 pb-3 flex items-center gap-2"><i class="fas fa-file-invoice-dollar text-rose-400"></i> Project Expense & Contractor Payment</h2>
+                    <form id="expense-form" class="space-y-3.5">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Select Project</label>
+                            <select id="expProject" class="w-full rounded-xl p-3 text-xs neo-input" required></select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Contractor / Supplier / Expense Type</label>
+                            <input type="text" id="expName" placeholder="e.g. ABC Cement Suppliers / Masonry Contractor" class="w-full rounded-xl p-3 text-xs neo-input" required>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Paid Amount (Rs)</label>
+                                <input type="number" id="expPaid" min="0" step="any" placeholder="0.00" class="w-full rounded-xl p-3 text-xs font-mono neo-input" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Pending Balance (Rs)</label>
+                                <input type="number" id="expPending" min="0" step="any" placeholder="0.00" class="w-full rounded-xl p-3 text-xs font-mono neo-input" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-slate-950 font-black py-3 rounded-xl text-xs">
+                            <i class="fas fa-save"></i> Save Payment Record
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Expense Records Table -->
+                <div class="lg:col-span-7 erp-card p-6 space-y-4">
+                    <h2 class="text-base font-bold text-white border-b border-slate-700/60 pb-3 flex items-center gap-2"><i class="fas fa-receipt text-purple-400"></i> Expense & Payable Records</h2>
+                    <div class="table-scroll-container">
+                        <table class="w-full text-left border-collapse min-w-[550px]">
+                            <thead>
+                                <tr class="bg-slate-900 text-slate-400 text-xs uppercase font-bold border-b border-slate-700">
+                                    <th class="p-3">Project & Payee</th>
+                                    <th class="p-3 text-right">Paid Amount</th>
+                                    <th class="p-3 text-right">Pending Debt</th>
+                                    <th class="p-3 text-center no-print">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expense-table-body" class="text-xs divide-y divide-slate-800"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COPYRIGHT FOOTER STATEMENT -->
+        <footer class="erp-card p-4 text-center text-xs text-slate-500 space-y-1 no-print">
+            <div class="flex justify-center gap-4 font-semibold text-slate-400">
+                <span><i class="fas fa-shield-halved text-amber-400"></i> Expert Build Security System</span>
+                <span>•</span>
+                <span><i class="fab fa-google-drive text-emerald-400"></i> Cloud Drive Sync</span>
+            </div>
+            <p>© 2026 <strong>Expert Build Solution (Pvt) Ltd</strong>. All Rights Reserved. Engineered for Construction & Share Management.</p>
+        </footer>
+
+    </div>
+
+    <!-- 1. ANTI-COPY & ANTI-INSPECT SECURITY SCRIPT -->
+    <script>
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.onkeydown = function(e) {
+            if (e.keyCode === 123) return false;
+            if (e.ctrlKey && e.keyCode === 'U'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 'I'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 'C'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 'J'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.keyCode === 'S'.charCodeAt(0)) return false;
+        };
+    </script>
+
+    <!-- 2. DEVICE-LOCK LICENSE ENGINE -->
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const clientKey = urlParams.get('key');
+        const customEndpoint = urlParams.get('endpoint');
+
+        const DEFAULT_ENDPOINT = "https://script.google.com/macros/s/AKfycbzvEOijNAgkKmucXoNPWT6D0uESaVGl1zM70Wm03ql_ySepn1s9jwoud3_Go77HBQCW/exec";
+        const GOOGLE_SCRIPT_URL = customEndpoint ? decodeURIComponent(customEndpoint) : DEFAULT_ENDPOINT;
+
+        let isLicenseVerified = false;
+
+        (function() {
+            if (!clientKey) {
+                showBlocked("⛔ Access Denied!", "Valid License Key Required in URL (e.g. ?key=ebs_001)");
+                return;
+            }
+
+            const deviceFP = window.btoa(navigator.userAgent.replace(/\s+/g, '') + screen.width + "x" + screen.height);
+
+            fetch(`${GOOGLE_SCRIPT_URL}?key=${encodeURIComponent(clientKey)}&device=${encodeURIComponent(deviceFP)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === "SUCCESS") { isLicenseVerified = true; } 
+                    else { showBlocked("⛔ Access Denied!", data.message); }
+                })
+                .catch(err => { showBlocked("⛔ Verification Error", "Unable to connect to verification server."); });
+
+            function showBlocked(title, msg) {
+                document.body.innerHTML = `
+                    <div style="display:flex; justify-content:center; align-items:center; height:100vh; background:#020617; color:#ef4444; font-family:sans-serif; text-align:center; padding:20px;">
+                        <div style="background:#0f172a; padding:30px; border-radius:16px; border:1px solid #ef4444; max-width:420px;">
+                            <h1 style="font-size:1.5rem; margin-bottom:12px; color:#ef4444;">${title}</h1>
+                            <p style="color:#94a3b8; font-size:0.9rem;">${msg}</p>
+                        </div>
+                    </div>`;
+            }
+        })();
+    </script>
+
+    <!-- 3. GOOGLE DRIVE APPDATA AUTO-SYNC ENGINE -->
+    <script>
+        // =========================================================================
+        // ⚠️ PASTE YOUR GOOGLE OAUTH CLIENT ID HERE:
+        // =========================================================================
+        const GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"; 
+        // =========================================================================
+        const SCOPES = "https://www.googleapis.com/auth/drive.appdata";
+
+        let tokenClient;
+        let gAccessToken = localStorage.getItem('g_drive_token_ebs') || null;
+        let driveFileId = localStorage.getItem('g_drive_file_id_ebs') || null;
+
+        function initGoogleDriveAuth() {
+            if (typeof google === 'undefined' || !google.accounts) return;
+
+            tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: GOOGLE_CLIENT_ID,
+                scope: SCOPES,
+                callback: async (response) => {
+                    if (response.access_token) {
+                        gAccessToken = response.access_token;
+                        localStorage.setItem('g_drive_token_ebs', gAccessToken);
+                        updateSyncBadge('sync-success', '<i class="fa-solid fa-cloud-check"></i> Google Drive Synced');
+                        await fetchOrInitDriveData();
+                    }
+                },
+            });
+
+            if (!gAccessToken) { requestGoogleDriveAccess(); } 
+            else { updateSyncBadge('sync-success', '<i class="fa-solid fa-cloud-check"></i> Google Drive Linked'); }
+        }
+
+        function requestGoogleDriveAccess() {
+            if (tokenClient) tokenClient.requestAccessToken({ prompt: '' });
+        }
+
+        function updateSyncBadge(cssClass, html) {
+            const badge = document.getElementById('syncBadge');
+            if (badge) { badge.className = cssClass; badge.innerHTML = html; }
+        }
+
+        async function fetchOrInitDriveData() {
+            if (!gAccessToken) return;
+            try {
+                let res = await fetch("https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name='ebs_erp_backup.json'", {
+                    headers: { 'Authorization': `Bearer ${gAccessToken}` }
+                });
+                let data = await res.json();
+                if (data.files && data.files.length > 0) {
+                    driveFileId = data.files[0].id;
+                    localStorage.setItem('g_drive_file_id_ebs', driveFileId);
+                    await downloadDriveData(driveFileId);
+                } else { await createDriveFile(); }
+            } catch (err) { console.log("Drive Fetch Error:", err); }
+        }
+
+        async function createDriveFile() {
+            const fileMetadata = { name: 'ebs_erp_backup.json', parents: ['appDataFolder'] };
+            const payload = { shareholders: shareholders, projects: projects, expenses: projectExpenses };
+
+            const form = new FormData();
+            form.append('metadata', new Blob([JSON.stringify(fileMetadata)], { type: 'application/json' }));
+            form.append('file', new Blob([JSON.stringify(payload)], { type: 'application/json' }));
+
+            let res = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&spaces=appDataFolder", {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${gAccessToken}` },
+                body: form
+            });
+            let file = await res.json();
+            if (file.id) {
+                driveFileId = file.id;
+                localStorage.setItem('g_drive_file_id_ebs', driveFileId);
+            }
+        }
+
+        async function syncToDrive() {
+            if (!gAccessToken) return;
+            if (!driveFileId) { await fetchOrInitDriveData(); return; }
+
+            try {
+                updateSyncBadge('sync-loading', '<i class="fa-solid fa-spinner fa-spin"></i> Syncing...');
+                const payload = { shareholders: shareholders, projects: projects, expenses: projectExpenses };
+
+                await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
+                    method: 'PATCH',
+                    headers: { 'Authorization': `Bearer ${gAccessToken}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                updateSyncBadge('sync-success', '<i class="fa-solid fa-cloud-check"></i> Drive Auto-Synced');
+            } catch (err) { updateSyncBadge('sync-loading', '<i class="fa-solid fa-triangle-exclamation"></i> Sync Error'); }
+        }
+
+        async function downloadDriveData(fileId) {
+            try {
+                let res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+                    headers: { 'Authorization': `Bearer ${gAccessToken}` }
+                });
+                let data = await res.json();
+                if (data) {
+                    if(data.shareholders) shareholders = data.shareholders;
+                    if(data.projects) projects = data.projects;
+                    if(data.expenses) projectExpenses = data.expenses;
+                    saveLocal();
+                    renderAll();
+                }
+            } catch (err) { console.log("Download error:", err); }
+        }
+
+        window.onload = () => { setTimeout(initGoogleDriveAuth, 1000); };
+    </script>
+
+    <!-- 4. CORE EBS ERP LOGIC -->
+    <script>
+        const DEFAULT_PIN = "1234";
+        let userPIN = localStorage.getItem('ebsErpPIN') || DEFAULT_PIN;
+
+        const loginScreen = document.getElementById('login-screen');
+        const appScreen = document.getElementById('app-screen');
+        const loginForm = document.getElementById('login-form');
+        const pinInput = document.getElementById('pin-input');
+        const loginError = document.getElementById('login-error');
+
+        if (sessionStorage.getItem('isEbsLoggedIn') === 'true') { showApp(); }
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (pinInput.value === userPIN) {
+                sessionStorage.setItem('isEbsLoggedIn', 'true');
+                loginError.classList.add('hidden');
+                showApp();
+            } else {
+                loginError.classList.remove('hidden');
+                pinInput.value = '';
+            }
+        });
+
+        function showApp() {
+            loginScreen.classList.add('hidden');
+            appScreen.classList.remove('hidden');
+            renderAll();
+        }
+
+        function logout() { sessionStorage.removeItem('isEbsLoggedIn'); location.reload(); }
+
+        function changePIN() {
+            const current = prompt("Enter Current PIN:");
+            if (current === userPIN) {
+                const newPIN = prompt("Enter NEW PIN (Min 4 digits):");
+                if (newPIN && newPIN.trim().length >= 4) {
+                    userPIN = newPIN.trim();
+                    localStorage.setItem('ebsErpPIN', userPIN);
+                    alert("PIN Changed Successfully!");
+                } else { alert("PIN must be at least 4 digits!"); }
+            } else if (current !== null) { alert("Current PIN Incorrect!"); }
+        }
+
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.remove('hidden');
+            btn.classList.add('active');
+        }
+
+        // DEFAULT 7 SHAREHOLDERS DATA
+        let defaultShareholders = [
+            { name: "Shareholder 1", capital: 0 },
+            { name: "Shareholder 2", capital: 0 },
+            { name: "Shareholder 3", capital: 0 },
+            { name: "Shareholder 4", capital: 0 },
+            { name: "Shareholder 5", capital: 0 },
+            { name: "Shareholder 6", capital: 0 },
+            { name: "Shareholder 7", capital: 0 }
+        ];
+
+        let shareholders = JSON.parse(localStorage.getItem('ebsShareholdersV1')) || defaultShareholders;
+        let projects = JSON.parse(localStorage.getItem('ebsProjectsV1')) || [];
+        let projectExpenses = JSON.parse(localStorage.getItem('ebsExpensesV1')) || [];
+        let shareChart = null;
+
+        const formatMoney = (num) => Number(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        function saveLocal() {
+            localStorage.setItem('ebsShareholdersV1', JSON.stringify(shareholders));
+            localStorage.setItem('ebsProjectsV1', JSON.stringify(projects));
+            localStorage.setItem('ebsExpensesV1', JSON.stringify(projectExpenses));
+        }
+
+        function saveAndSync() {
+            saveLocal();
+            syncToDrive();
+        }
+
+        // Add Project
+        document.getElementById('project-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            projects.push({
+                title: document.getElementById('pTitle').value,
+                value: parseFloat(document.getElementById('pValue').value) || 0
+            });
+            this.reset();
+            saveAndSync();
+            renderAll();
+        });
+
+        // Add Expense
+        document.getElementById('expense-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            projectExpenses.push({
+                project: document.getElementById('expProject').value,
+                name: document.getElementById('expName').value,
+                paid: parseFloat(document.getElementById('expPaid').value) || 0,
+                pending: parseFloat(document.getElementById('expPending').value) || 0
+            });
+            this.reset();
+            saveAndSync();
+            renderAll();
+        });
+
+        function updateShareholderCapital(index) {
+            const newCap = prompt(`"${shareholders[index].name}" තැන්පත් කළ මුදල (Rs):`, shareholders[index].capital);
+            if (newCap !== null && !isNaN(newCap) && newCap !== '') {
+                shareholders[index].capital = parseFloat(newCap);
+                saveAndSync();
+                renderAll();
+            }
+        }
+
+        function renderAll() {
+            let totalCapital = shareholders.reduce((acc, curr) => acc + curr.capital, 0);
+            let totalProjectValue = projects.reduce((acc, curr) => acc + curr.value, 0);
+            let totalPaidExpenses = projectExpenses.reduce((acc, curr) => acc + curr.paid, 0);
+            let totalPendingPayables = projectExpenses.reduce((acc, curr) => acc + curr.pending, 0);
+
+            let netProfit = totalProjectValue - (totalPaidExpenses + totalPendingPayables);
+
+            // Update Dashboard Overview
+            document.getElementById('dash-capital').innerText = formatMoney(totalCapital);
+            document.getElementById('dash-expenses').innerText = formatMoney(totalPaidExpenses);
+            document.getElementById('dash-payables').innerText = formatMoney(totalPendingPayables);
+            document.getElementById('dash-profit').innerText = formatMoney(netProfit);
+            document.getElementById('dash-project-count').innerText = projects.length;
+
+            // Render 7 Shareholders Table
+            const sBody = document.getElementById('shareholder-table-body');
+            sBody.innerHTML = '';
+            shareholders.forEach((s, idx) => {
+                let sharePct = totalCapital > 0 ? ((s.capital / totalCapital) * 100).toFixed(2) : "0.00";
+                let expectedProfit = netProfit > 0 ? (netProfit * (sharePct / 100)) : 0;
+
+                let tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-800/40 transition";
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-white"><i class="fas fa-user-circle text-amber-400 mr-2"></i>${s.name}</td>
+                    <td class="p-3 text-right font-mono text-cyan-400 font-bold">Rs. ${formatMoney(s.capital)}</td>
+                    <td class="p-3 text-right font-mono text-amber-400 font-bold">${sharePct}%</td>
+                    <td class="p-3 text-right font-mono text-emerald-400 font-bold">Rs. ${formatMoney(expectedProfit)}</td>
+                    <td class="p-3 text-center no-print">
+                        <button onclick="updateShareholderCapital(${idx})" class="text-xs bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 px-2.5 py-1 rounded-lg font-bold hover:bg-indigo-600/50">
+                            <i class="fas fa-edit"></i> Edit Capital
+                        </button>
+                    </td>
+                `;
+                sBody.appendChild(tr);
+            });
+
+            // Render Projects Dropdown
+            const pSelect = document.getElementById('expProject');
+            pSelect.innerHTML = '';
+            projects.forEach(p => {
+                pSelect.innerHTML += `<option value="${p.title}">${p.title}</option>`;
+            });
+
+            // Render Projects Table
+            const pBody = document.getElementById('project-table-body');
+            pBody.innerHTML = '';
+            projects.forEach((p, idx) => {
+                let pExpenses = projectExpenses.filter(e => e.project === p.title).reduce((acc, curr) => acc + curr.paid + curr.pending, 0);
+                let pProfit = p.value - pExpenses;
+
+                let tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-800/40 transition";
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-white">${p.title}</td>
+                    <td class="p-3 text-right font-mono text-cyan-400">Rs. ${formatMoney(p.value)}</td>
+                    <td class="p-3 text-right font-mono text-rose-400">Rs. ${formatMoney(pExpenses)}</td>
+                    <td class="p-3 text-right font-mono text-emerald-400 font-bold">Rs. ${formatMoney(pProfit)}</td>
+                    <td class="p-3 text-center no-print"><button onclick="deleteProject(${idx})" class="text-rose-400 hover:text-rose-300"><i class="fas fa-trash-alt"></i></button></td>
+                `;
+                pBody.appendChild(tr);
+            });
+
+            // Render Expenses Table
+            const eBody = document.getElementById('expense-table-body');
+            eBody.innerHTML = '';
+            projectExpenses.forEach((e, idx) => {
+                let tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-800/40 transition";
+                tr.innerHTML = `
+                    <td class="p-3"><span class="font-bold text-white">${e.name}</span><br><span class="text-[10px] text-cyan-400 font-semibold">${e.project}</span></td>
+                    <td class="p-3 text-right font-mono text-emerald-400 font-bold">Rs. ${formatMoney(e.paid)}</td>
+                    <td class="p-3 text-right font-mono text-rose-400 font-bold">Rs. ${formatMoney(e.pending)}</td>
+                    <td class="p-3 text-center no-print"><button onclick="deleteExpense(${idx})" class="text-rose-400 hover:text-rose-300"><i class="fas fa-trash-alt"></i></button></td>
+                `;
+                eBody.appendChild(tr);
+            });
+
+            renderChart();
+        }
+
+        function renderChart() {
+            const ctx = document.getElementById('shareChart').getContext('2d');
+            if (shareChart) shareChart.destroy();
+
+            const labels = shareholders.map(s => s.name);
+            const dataValues = shareholders.map(s => s.capital);
+
+            shareChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{ data: dataValues, backgroundColor: ['#f59e0b', '#06b6d4', '#8b5cf6', '#10b981', '#f43f5e', '#3b82f6', '#ec4899'] }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 10 } } } }
+                }
+            });
+        }
+
+        function deleteProject(idx) {
+            if(confirm("Are you sure you want to delete this project?")) {
+                projects.splice(idx, 1);
+                saveAndSync();
+                renderAll();
+            }
+        }
+
+        function deleteExpense(idx) {
+            if(confirm("Are you sure you want to delete this expense record?")) {
+                projectExpenses.splice(idx, 1);
+                saveAndSync();
+                renderAll();
+            }
+        }
+
+        function clearAllData() {
+            if(confirm("WARNING: This will reset all projects and expenses. Continue?")) {
+                projects = [];
+                projectExpenses = [];
+                shareholders = defaultShareholders;
+                saveAndSync();
+                renderAll();
+            }
+        }
+    </script>
+</body>
+</html>
