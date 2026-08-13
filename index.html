@@ -51,8 +51,8 @@
 
         .neo-input {
             background: rgba(30, 41, 59, 0.9) !important;
-            border: 1px solid rgba(255, 255, 255, 0.15) !important;
-            color: #f8fafc !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
             transition: all 0.25s ease;
         }
         .neo-input:focus {
@@ -67,7 +67,7 @@
             font-weight: 700;
             border-radius: 12px;
             transition: all 0.3s ease;
-            color: #94a3b8;
+            color: #cbd5e1;
             display: inline-flex;
             align-items: center;
             gap: 6px;
@@ -78,13 +78,13 @@
             box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
         }
 
-        /* Fixed Height & Scrollbar for Tables */
+        /* Screen Scrollbar logic */
         .table-scroll-container { 
-            max-height: 320px; 
+            max-height: 350px; 
             overflow-y: auto; 
             border-radius: 12px;
         }
-        .table-scroll-container th { position: sticky; top: 0; z-index: 20; background-color: #0f172a; }
+        .table-scroll-container th { position: sticky; top: 0; z-index: 20; background-color: #0f172a; color: #f1f5f9; }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
@@ -98,11 +98,20 @@
         .bond-warning { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #f59e0b; }
         .bond-expired { background: rgba(244, 63, 94, 0.2); border: 1px solid rgba(244, 63, 94, 0.5); color: #f43f5e; }
 
+        /* ABSOLUTE PRINT OVERRIDE - NO SCROLLBARS, ALL EXPANDED, NO INVOICE OVERLAY BUG */
         @media print {
-            .no-print { display: none !important; }
-            body { background: white !important; color: black !important; padding: 0 !important; }
-            .erp-card { background: white !important; border: 1px solid #000 !important; box-shadow: none !important; color: black !important; border-radius: 0 !important; }
-            th, td { border: 1px solid #000 !important; color: black !important; }
+            .no-print, header, nav, .tab-btn, button, #login-screen { display: none !important; }
+            body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; }
+            .erp-card { background: white !important; border: 1px solid #ccc !important; box-shadow: none !important; color: black !important; border-radius: 0 !important; }
+            .table-scroll-container { max-height: none !important; overflow: visible !important; }
+            table { width: 100% !important; border-collapse: collapse !important; }
+            th, td { border: 1px solid #000 !important; color: black !important; padding: 6px !important; }
+            th { background-color: #e2e8f0 !important; }
+            
+            /* Invoice printing logic */
+            body.printing-invoice #app-screen { display: none !important; }
+            body.printing-invoice #invoice-modal { position: absolute !important; inset: 0 !important; background: white !important; display: block !important; padding: 0 !important; }
+            body.printing-invoice #printable-invoice-content { border: none !important; box-shadow: none !important; }
         }
     </style>
 </head>
@@ -116,7 +125,7 @@
             </div>
             <div>
                 <h2 class="text-xl font-black text-white tracking-tight">EXPERT BUILD SOLUTION</h2>
-                <p class="text-xs text-amber-400 font-bold mt-1">Professional ERP System OS</p>
+                <p class="text-xs text-amber-400 font-bold mt-1">Expert Build Solution Professional ERP System OS</p>
             </div>
 
             <form id="login-form" class="space-y-4">
@@ -178,6 +187,7 @@
             <button class="tab-btn active" onclick="switchTab('tab-dashboard', this)"><i class="fas fa-chart-line"></i> Dashboard & Growth</button>
             <button class="tab-btn" onclick="switchTab('tab-shareholders', this)"><i class="fas fa-users"></i> Shareholders & Custom Shares</button>
             <button class="tab-btn" onclick="switchTab('tab-projects', this)"><i class="fas fa-city"></i> Project Management</button>
+            <button class="tab-btn" onclick="switchTab('tab-income', this)"><i class="fas fa-hand-holding-dollar"></i> Client Income Schedule</button>
             <button class="tab-btn" onclick="switchTab('tab-contractors', this)"><i class="fas fa-hard-hat"></i> Contractors & Invoices</button>
             <button class="tab-btn" onclick="switchTab('tab-overhead', this)"><i class="fas fa-building-user"></i> Office Overhead</button>
             <button class="tab-btn" onclick="switchTab('tab-upcoming', this)"><i class="fas fa-calendar-check"></i> Upcoming Payments</button>
@@ -192,9 +202,9 @@
                     <p class="text-[10px] text-slate-500 mt-1">තැන්පත් කළ මුදල</p>
                 </div>
                 <div class="erp-card p-4 border-l-4 border-l-cyan-400">
-                    <span class="text-[11px] font-bold uppercase text-slate-400 tracking-wider">Total Projects Income</span>
+                    <span class="text-[11px] font-bold uppercase text-slate-400 tracking-wider">Total Received Income</span>
                     <div class="text-xl font-black text-cyan-400 font-mono mt-1">Rs. <span id="dash-income">0.00</span></div>
-                    <p class="text-[10px] text-slate-500 mt-1">Projects මුළු ආදායම</p>
+                    <p class="text-[10px] text-slate-500 mt-1">සැබෑ ලෙසම ලැබුණු මුළු ආදායම</p>
                 </div>
                 <div class="erp-card p-4 border-l-4 border-l-rose-400">
                     <span class="text-[11px] font-bold uppercase text-slate-400 tracking-wider">Total Expenses Paid</span>
@@ -233,13 +243,13 @@
                 <div class="table-scroll-container">
                     <table class="w-full text-left border-collapse min-w-[700px]">
                         <thead>
-                            <tr class="bg-slate-900 text-slate-400 text-xs uppercase font-bold border-b border-slate-700">
+                            <tr class="bg-slate-900 text-slate-200 text-xs uppercase font-bold border-b border-slate-700">
                                 <th class="p-3">Project Title & Source</th>
                                 <th class="p-3 text-right">Contract Value</th>
-                                <th class="p-3 text-right">Site Expenses</th>
-                                <th class="p-3 text-right">Project Profit</th>
-                                <th class="p-3 text-right">Company Retention Reserve</th>
-                                <th class="p-3 text-center">Bond Type & Status</th>
+                                <th class="p-3 text-right">Actual Received</th>
+                                <th class="p-3 text-right">Expenses Paid</th>
+                                <th class="p-3 text-right">Current Net Profit</th>
+                                <th class="p-3 text-center">Active Bonds Summary</th>
                             </tr>
                         </thead>
                         <tbody id="dash-projects-body" class="text-xs divide-y divide-slate-800"></tbody>
@@ -252,14 +262,14 @@
         <div id="tab-shareholders" class="tab-content hidden space-y-6">
             <div class="erp-card p-6 space-y-4">
                 <div class="border-b border-slate-700/60 pb-3 flex justify-between items-center">
-                    <h2 class="text-base font-bold text-white flex items-center gap-2"><i class="fas fa-users text-amber-400"></i> 7 Shareholders Master Directory</h2>
+                    <h2 class="text-base font-bold text-white flex items-center gap-2"><i class="fas fa-users text-amber-400"></i> Shareholders Master Directory</h2>
                     <button onclick="addShareholder()" class="bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 font-bold px-3 py-1.5 rounded-xl text-xs"><i class="fas fa-plus"></i> Add Shareholder</button>
                 </div>
 
                 <div class="table-scroll-container">
                     <table class="w-full text-left border-collapse min-w-[600px]">
                         <thead>
-                            <tr class="bg-slate-900 text-slate-400 text-xs uppercase font-bold border-b border-slate-700">
+                            <tr class="bg-slate-900 text-slate-200 text-xs uppercase font-bold border-b border-slate-700">
                                 <th class="p-3">Shareholder Name</th>
                                 <th class="p-3 text-right">Capital Invested (Rs)</th>
                                 <th class="p-3 text-right">Default Base Share %</th>
@@ -285,25 +295,25 @@
             </div>
         </div>
 
-        <!-- TAB 3: PROJECT MANAGEMENT & FLEXIBLE BOND TYPES -->
+        <!-- TAB 3: PROJECT MANAGEMENT & MULTIPLE BONDS -->
         <div id="tab-projects" class="tab-content hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Form -->
+                <!-- Project Form -->
                 <div class="lg:col-span-5 no-print erp-card p-6 space-y-4">
                     <h2 class="text-base font-bold text-white border-b border-slate-700/60 pb-3 flex items-center gap-2" id="project-form-title"><i class="fas fa-folder-plus text-cyan-400"></i> Add / Edit Construction Project</h2>
                     <form id="project-form" class="space-y-3">
                         <input type="hidden" id="editProjectIndex" value="-1">
                         <div>
-                            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Project Title / Location</label>
+                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Project Title / Location</label>
                             <input type="text" id="pTitle" placeholder="e.g. Luxury Apartment - Colombo 07" class="w-full rounded-xl p-2.5 text-xs neo-input" required>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Contract Value (Rs)</label>
-                                <input type="number" id="pValue" min="0" step="any" placeholder="Total Value" class="w-full rounded-xl p-2.5 text-xs font-mono neo-input" required>
+                                <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Contract Value (Rs)</label>
+                                <input type="number" id="pValue" min="0" step="any" placeholder="Total Agreed Contract" class="w-full rounded-xl p-2.5 text-xs font-mono neo-input" required>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Project Source</label>
+                                <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Project Source</label>
                                 <select id="pSource" class="w-full rounded-xl p-2.5 text-xs neo-input" required>
                                     <option value="Tender">Government / Private Tender</option>
                                     <option value="Private Direct">Private Direct Client</option>
@@ -314,45 +324,47 @@
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Start Date</label>
+                                <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Start Date</label>
                                 <input type="date" id="pStartDate" class="w-full rounded-xl p-2.5 text-xs neo-input" required>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Completion Date</label>
+                                <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Completion Date</label>
                                 <input type="date" id="pEndDate" class="w-full rounded-xl p-2.5 text-xs neo-input" required>
                             </div>
                         </div>
-                        <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-2">
-                            <div class="flex justify-between items-center">
-                                <span class="text-xs font-bold text-amber-400 flex items-center gap-1.5"><i class="fas fa-shield-cat"></i> Guarantee / Bond Details</span>
-                                <label class="text-[11px] text-slate-400 flex items-center gap-1.5 cursor-pointer">
-                                    <input type="checkbox" id="pNoBondCheck" onchange="toggleBondInputs()" class="rounded"> No Bond Required
-                                </label>
-                            </div>
-                            <div id="bondInputsBox" class="space-y-2">
-                                <input type="text" id="pBondType" placeholder="Bond Type (e.g. Performance Guarantee / Bid Bond)" class="w-full rounded-xl p-2 text-xs neo-input">
-                                <div class="grid grid-cols-2 gap-2">
-                                    <input type="number" id="pBondValue" min="0" step="any" placeholder="Bond Value (Rs)" class="w-full rounded-xl p-2 text-xs font-mono neo-input">
-                                    <input type="date" id="pBondExpiry" class="w-full rounded-xl p-2 text-xs neo-input">
-                                </div>
-                            </div>
-                        </div>
                         <button type="submit" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-black py-3 rounded-xl text-xs">
-                            <i class="fas fa-save"></i> Save Project
+                            <i class="fas fa-save"></i> Save Project Base Details
                         </button>
                     </form>
+
+                    <!-- Multiple Bond Entry Section -->
+                    <div class="p-4 bg-slate-900 rounded-xl border border-slate-800 space-y-3">
+                        <h3 class="text-xs font-bold text-amber-400 flex items-center gap-1.5"><i class="fas fa-shield-cat"></i> Manage Multiple Project Bonds</h3>
+                        <form id="bond-form" class="space-y-2">
+                            <div>
+                                <label class="block text-[10px] uppercase text-slate-400 font-bold">Select Project for Bond</label>
+                                <select id="bondProjectSelect" class="w-full rounded-xl p-2 text-xs neo-input" required></select>
+                            </div>
+                            <input type="text" id="bType" placeholder="Bond Name (e.g. Advance Bond / Performance Bond)" class="w-full rounded-xl p-2 text-xs neo-input" required>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="number" id="bValue" min="0" step="any" placeholder="Bond Value (Rs)" class="w-full rounded-xl p-2 text-xs font-mono neo-input" required>
+                                <input type="date" id="bExpiry" class="w-full rounded-xl p-2 text-xs neo-input" required>
+                            </div>
+                            <button type="submit" class="w-full bg-amber-500 text-slate-950 font-bold py-2 rounded-xl text-xs"><i class="fas fa-plus-circle"></i> Add Bond to Project</button>
+                        </form>
+                    </div>
                 </div>
 
-                <!-- Projects Directory Table -->
+                <!-- Projects & Bonds Directory Table -->
                 <div class="lg:col-span-7 erp-card p-6 space-y-4">
-                    <h2 class="text-base font-bold text-white border-b border-slate-700/60 pb-3 flex items-center gap-2"><i class="fas fa-list-check text-emerald-400"></i> Active Projects & Bond Expiry Directory</h2>
+                    <h2 class="text-base font-bold text-white border-b border-slate-700/60 pb-3 flex items-center gap-2"><i class="fas fa-list-check text-emerald-400"></i> Active Projects & Bonds Directory</h2>
                     <div class="table-scroll-container">
                         <table class="w-full text-left border-collapse min-w-[650px]">
                             <thead>
-                                <tr class="bg-slate-900 text-slate-400 text-xs uppercase font-bold border-b border-slate-700">
+                                <tr class="bg-slate-900 text-slate-200 text-xs uppercase font-bold border-b border-slate-700">
                                     <th class="p-3">Project Title & Source</th>
                                     <th class="p-3 text-right">Contract Value</th>
-                                    <th class="p-3 text-center">Dates & Bond Details</th>
+                                    <th class="p-3 text-center">Dates & Active Bonds</th>
                                     <th class="p-3 text-center no-print">Actions</th>
                                 </tr>
                             </thead>
@@ -363,7 +375,71 @@
             </div>
         </div>
 
-        <!-- TAB 4: CONTRACTOR/SUPPLIER AUTO-BALANCE & CUMULATIVE INVOICE -->
+        <!-- NEW TAB 4: CLIENT INCOME / INSTALLMENT PAYMENTS ENGINE -->
+        <div id="tab-income" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Income Entry Form -->
+                <div class="lg:col-span-5 no-print erp-card p-6 space-y-4">
+                    <h2 class="text-base font-bold text-white border-b border-slate-700/60 pb-3 flex items-center gap-2" id="income-form-title"><i class="fas fa-hand-holding-dollar text-emerald-400"></i> Record Client Payment / Installment</h2>
+                    <form id="income-form" class="space-y-3">
+                        <input type="hidden" id="editIncomeIndex" value="-1">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Select Project</label>
+                            <select id="incProject" class="w-full rounded-xl p-2.5 text-xs neo-input" required></select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Payment Stage / Type</label>
+                            <select id="incType" class="w-full rounded-xl p-2.5 text-xs neo-input" required>
+                                <option value="Advance Payment">Advance Payment</option>
+                                <option value="Interim Bill 01 Payment">Interim Bill 01 Payment</option>
+                                <option value="Interim Bill 02 Payment">Interim Bill 02 Payment</option>
+                                <option value="Interim Bill 03 Payment">Interim Bill 03 Payment</option>
+                                <option value="Retention Release">Retention Money Release</option>
+                                <option value="Final Bill Payment">Final Bill Payment</option>
+                                <option value="Other Client Receipt">Other Client Receipt</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Received Date</label>
+                                <input type="date" id="incDate" class="w-full rounded-xl p-2.5 text-xs neo-input" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Received Amount (Rs)</label>
+                                <input type="number" id="incAmount" min="0" step="any" placeholder="0.00" class="w-full rounded-xl p-2.5 text-xs font-mono neo-input" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Receipt / Voucher Reference Note</label>
+                            <input type="text" id="incNote" placeholder="e.g. Chq #1024 / Bank Transfer Ref" class="w-full rounded-xl p-2.5 text-xs neo-input">
+                        </div>
+                        <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-slate-950 font-black py-3 rounded-xl text-xs">
+                            <i class="fas fa-save"></i> Save Client Payment Receipt
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Income Records Directory -->
+                <div class="lg:col-span-7 erp-card p-6 space-y-4">
+                    <h2 class="text-base font-bold text-white border-b border-slate-700/60 pb-3 flex items-center gap-2"><i class="fas fa-file-circle-check text-cyan-400"></i> Client Payment Receipts Schedule</h2>
+                    <div class="table-scroll-container">
+                        <table class="w-full text-left border-collapse min-w-[600px]">
+                            <thead>
+                                <tr class="bg-slate-900 text-slate-200 text-xs uppercase font-bold border-b border-slate-700">
+                                    <th class="p-3">Project & Stage</th>
+                                    <th class="p-3 text-center">Date</th>
+                                    <th class="p-3 text-right">Amount Received</th>
+                                    <th class="p-3 text-center no-print">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="income-table-body" class="text-xs divide-y divide-slate-800"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: CONTRACTOR/SUPPLIER AUTO-BALANCE & CUMULATIVE INVOICE -->
         <div id="tab-contractors" class="tab-content hidden space-y-6">
             <div class="erp-card p-4 border-l-4 border-l-amber-400 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div>
@@ -382,25 +458,25 @@
                     <form id="expense-form" class="space-y-3">
                         <input type="hidden" id="editExpenseIndex" value="-1">
                         <div>
-                            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Select Project</label>
+                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Select Project</label>
                             <select id="expProject" class="w-full rounded-xl p-2.5 text-xs neo-input" required></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Contractor / Supplier / Payee Name</label>
+                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Contractor / Supplier / Payee Name</label>
                             <input type="text" id="expName" placeholder="e.g. Tokyo Cement PLC / Sub-Contractor Kumara" class="w-full rounded-xl p-2.5 text-xs neo-input" required>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Estimate Amount (Rs)</label>
+                                <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Estimate Amount (Rs)</label>
                                 <input type="number" id="expEst" min="0" step="any" oninput="autoCalcExpenseBalance()" placeholder="0.00" class="w-full rounded-xl p-2.5 text-xs font-mono neo-input" required>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Paid Amount (Rs)</label>
+                                <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Paid Amount (Rs)</label>
                                 <input type="number" id="expPaid" min="0" step="any" oninput="autoCalcExpenseBalance()" placeholder="0.00" class="w-full rounded-xl p-2.5 text-xs font-mono neo-input" required>
                             </div>
                         </div>
                         <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex justify-between items-center">
-                            <span class="text-xs text-slate-400 font-bold">Auto Calculated Balance Due:</span>
+                            <span class="text-xs text-slate-300 font-bold">Auto Calculated Balance Due:</span>
                             <span class="text-sm font-black text-rose-400 font-mono">Rs. <span id="expBalancePreview">0.00</span></span>
                         </div>
                         <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-slate-950 font-black py-3 rounded-xl text-xs">
@@ -415,7 +491,7 @@
                     <div class="table-scroll-container">
                         <table class="w-full text-left border-collapse min-w-[600px]">
                             <thead>
-                                <tr class="bg-slate-900 text-slate-400 text-xs uppercase font-bold border-b border-slate-700">
+                                <tr class="bg-slate-900 text-slate-200 text-xs uppercase font-bold border-b border-slate-700">
                                     <th class="p-3">Project & Payee</th>
                                     <th class="p-3 text-right">Estimate</th>
                                     <th class="p-3 text-right">Paid</th>
@@ -430,7 +506,7 @@
             </div>
         </div>
 
-        <!-- TAB 5: OFFICE OVERHEAD EXPENSES & AUTO BALANCE -->
+        <!-- TAB 6: OFFICE OVERHEAD EXPENSES & AUTO BALANCE -->
         <div id="tab-overhead" class="tab-content hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <!-- Overhead Form -->
@@ -439,7 +515,7 @@
                     <form id="overhead-form" class="space-y-3">
                         <input type="hidden" id="editOverheadIndex" value="-1">
                         <div>
-                            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Expense Category / Type</label>
+                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Expense Category / Type</label>
                             <select id="ohCategory" class="w-full rounded-xl p-2.5 text-xs neo-input" required>
                                 <option value="Office Rent">Office Building Rent</option>
                                 <option value="Electricity Bill">Electricity Bill</option>
@@ -451,25 +527,25 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Description / Voucher Note</label>
+                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Description / Voucher Note</label>
                             <input type="text" id="ohDesc" placeholder="e.g. Head Office Electricity Bill - August" class="w-full rounded-xl p-2.5 text-xs neo-input" required>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Date</label>
+                            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Date</label>
                             <input type="date" id="ohDate" class="w-full rounded-xl p-2.5 text-xs neo-input" required>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Total Bill / Est (Rs)</label>
+                                <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Total Bill / Est (Rs)</label>
                                 <input type="number" id="ohEst" min="0" step="any" oninput="autoCalcOverheadBalance()" placeholder="0.00" class="w-full rounded-xl p-2.5 text-xs font-mono neo-input" required>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Paid Amount (Rs)</label>
+                                <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Paid Amount (Rs)</label>
                                 <input type="number" id="ohPaid" min="0" step="any" oninput="autoCalcOverheadBalance()" placeholder="0.00" class="w-full rounded-xl p-2.5 text-xs font-mono neo-input" required>
                             </div>
                         </div>
                         <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex justify-between items-center">
-                            <span class="text-xs text-slate-400 font-bold">Auto Calculated Pending Balance:</span>
+                            <span class="text-xs text-slate-300 font-bold">Auto Calculated Pending Balance:</span>
                             <span class="text-sm font-black text-rose-400 font-mono">Rs. <span id="ohBalancePreview">0.00</span></span>
                         </div>
                         <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-black py-3 rounded-xl text-xs">
@@ -482,12 +558,12 @@
                 <div class="lg:col-span-7 erp-card p-6 space-y-4">
                     <div class="flex justify-between items-center border-b border-slate-700/60 pb-3">
                         <h2 class="text-base font-bold text-white flex items-center gap-2"><i class="fas fa-list-check text-purple-400"></i> Office Overhead Expenses Summary</h2>
-                        <span class="text-xs font-mono text-rose-400 font-bold bg-rose-500/10 px-3 py-1 rounded-lg border border-rose-500/20">Total Paid: Rs. <span id="overhead-total-label">0.00</span></span>
+                        <span class="text-xs font-mono text-rose-300 font-bold bg-rose-500/10 px-3 py-1 rounded-lg border border-rose-500/20">Total Paid: Rs. <span id="overhead-total-label">0.00</span></span>
                     </div>
                     <div class="table-scroll-container">
                         <table class="w-full text-left border-collapse min-w-[550px]">
                             <thead>
-                                <tr class="bg-slate-900 text-slate-400 text-xs uppercase font-bold border-b border-slate-700">
+                                <tr class="bg-slate-900 text-slate-200 text-xs uppercase font-bold border-b border-slate-700">
                                     <th class="p-3">Category & Note</th>
                                     <th class="p-3 text-right">Total Est</th>
                                     <th class="p-3 text-right">Paid</th>
@@ -502,7 +578,7 @@
             </div>
         </div>
 
-        <!-- TAB 6: UPCOMING & BALANCE PAYMENTS MONITOR -->
+        <!-- TAB 7: UPCOMING & BALANCE PAYMENTS MONITOR -->
         <div id="tab-upcoming" class="tab-content hidden space-y-6">
             <div class="erp-card p-6 space-y-4">
                 <div class="border-b border-slate-700/60 pb-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -515,11 +591,11 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
                     <div class="p-4 bg-slate-900 rounded-xl border border-slate-800">
-                        <span class="text-[11px] text-slate-400 uppercase font-bold">Site Payables</span>
+                        <span class="text-[11px] text-slate-300 uppercase font-bold">Site Payables</span>
                         <div class="text-lg font-mono text-rose-400 font-bold mt-1">Rs. <span id="upcoming-total-site-payables">0.00</span></div>
                     </div>
                     <div class="p-4 bg-slate-900 rounded-xl border border-slate-800">
-                        <span class="text-[11px] text-slate-400 uppercase font-bold">Office Overhead Payables</span>
+                        <span class="text-[11px] text-slate-300 uppercase font-bold">Office Overhead Payables</span>
                         <div class="text-lg font-mono text-purple-400 font-bold mt-1">Rs. <span id="upcoming-total-oh-payables">0.00</span></div>
                     </div>
                     <div class="p-4 bg-slate-900 rounded-xl border border-slate-800 bg-rose-500/5">
@@ -527,7 +603,7 @@
                         <div class="text-lg font-mono text-rose-400 font-bold mt-1">Rs. <span id="upcoming-grand-total">0.00</span></div>
                     </div>
                     <div class="p-4 bg-slate-900 rounded-xl border border-slate-800">
-                        <span class="text-[11px] text-slate-400 uppercase font-bold">Expiring Bonds</span>
+                        <span class="text-[11px] text-slate-300 uppercase font-bold">Expiring Bonds</span>
                         <div class="text-lg font-mono text-amber-400 font-bold mt-1"><span id="upcoming-bond-warning-count">0</span> Bonds</div>
                     </div>
                 </div>
@@ -535,7 +611,7 @@
                 <div class="table-scroll-container">
                     <table class="w-full text-left border-collapse min-w-[650px]">
                         <thead>
-                            <tr class="bg-slate-900 text-slate-400 text-xs uppercase font-bold border-b border-slate-700">
+                            <tr class="bg-slate-900 text-slate-200 text-xs uppercase font-bold border-b border-slate-700">
                                 <th class="p-3">Category / Scope</th>
                                 <th class="p-3">Payee / Description</th>
                                 <th class="p-3 text-right">Original Estimate</th>
@@ -550,8 +626,8 @@
         </div>
 
         <!-- COPYRIGHT FOOTER STATEMENT -->
-        <footer class="erp-card p-4 text-center text-xs text-slate-500 space-y-1 no-print">
-            <div class="flex justify-center gap-4 font-semibold text-slate-400">
+        <footer class="erp-card p-4 text-center text-xs text-slate-400 space-y-1 no-print">
+            <div class="flex justify-center gap-4 font-semibold text-slate-300">
                 <span><i class="fas fa-shield-halved text-amber-400"></i> Expert Build Security System</span>
                 <span>•</span>
                 <span><i class="fab fa-google-drive text-emerald-400"></i> Cloud Drive Sync Enabled</span>
@@ -561,10 +637,10 @@
 
     </div>
 
-    <!-- CUMULATIVE INVOICE MODAL -->
+    <!-- CUMULATIVE INVOICE MODAL (NO PRINT BACKGROUND BUG) -->
     <div id="invoice-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden">
         <div class="w-full max-w-2xl erp-card p-6 bg-slate-900 text-slate-100 border border-amber-500/30 space-y-4 max-h-[90vh] overflow-y-auto">
-            <div id="printable-invoice-content" class="space-y-4 p-4 bg-white text-slate-950 rounded-xl">
+            <div id="printable-invoice-content" class="space-y-4 p-6 bg-white text-slate-950 rounded-xl">
                 <!-- Dynamic Invoice Content -->
             </div>
             <div class="flex justify-end gap-2 no-print">
@@ -632,8 +708,8 @@
         const SCOPES = "https://www.googleapis.com/auth/drive.appdata";
 
         let tokenClient;
-        let gAccessToken = localStorage.getItem('g_drive_token_ebs_v5') || null;
-        let driveFileId = localStorage.getItem('g_drive_file_id_ebs_v5') || null;
+        let gAccessToken = localStorage.getItem('g_drive_token_ebs_v6') || null;
+        let driveFileId = localStorage.getItem('g_drive_file_id_ebs_v6') || null;
 
         function initGoogleDriveAuth() {
             if (typeof google === 'undefined' || !google.accounts) return;
@@ -644,7 +720,7 @@
                 callback: async (response) => {
                     if (response.access_token) {
                         gAccessToken = response.access_token;
-                        localStorage.setItem('g_drive_token_ebs_v5', gAccessToken);
+                        localStorage.setItem('g_drive_token_ebs_v6', gAccessToken);
                         updateSyncBadge('sync-success', '<i class="fa-solid fa-cloud-check"></i> Google Drive Synced');
                         await fetchOrInitDriveData();
                     }
@@ -667,21 +743,21 @@
         async function fetchOrInitDriveData() {
             if (!gAccessToken) return;
             try {
-                let res = await fetch("https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name='ebs_erp_v5_backup.json'", {
+                let res = await fetch("https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name='ebs_erp_v6_backup.json'", {
                     headers: { 'Authorization': `Bearer ${gAccessToken}` }
                 });
                 let data = await res.json();
                 if (data.files && data.files.length > 0) {
                     driveFileId = data.files[0].id;
-                    localStorage.setItem('g_drive_file_id_ebs_v5', driveFileId);
+                    localStorage.setItem('g_drive_file_id_ebs_v6', driveFileId);
                     await downloadDriveData(driveFileId);
                 } else { await createDriveFile(); }
             } catch (err) { console.log("Drive Fetch Error:", err); }
         }
 
         async function createDriveFile() {
-            const fileMetadata = { name: 'ebs_erp_v5_backup.json', parents: ['appDataFolder'] };
-            const payload = { shareholders: shareholders, projects: projects, expenses: projectExpenses, overheads: officeOverheads, projectConfig: projectConfig };
+            const fileMetadata = { name: 'ebs_erp_v6_backup.json', parents: ['appDataFolder'] };
+            const payload = { shareholders: shareholders, projects: projects, projectIncomes: projectIncomes, expenses: projectExpenses, overheads: officeOverheads, projectConfig: projectConfig };
 
             const form = new FormData();
             form.append('metadata', new Blob([JSON.stringify(fileMetadata)], { type: 'application/json' }));
@@ -695,7 +771,7 @@
             let file = await res.json();
             if (file.id) {
                 driveFileId = file.id;
-                localStorage.setItem('g_drive_file_id_ebs_v5', driveFileId);
+                localStorage.setItem('g_drive_file_id_ebs_v6', driveFileId);
             }
         }
 
@@ -705,7 +781,7 @@
 
             try {
                 updateSyncBadge('sync-loading', '<i class="fa-solid fa-spinner fa-spin"></i> Syncing...');
-                const payload = { shareholders: shareholders, projects: projects, expenses: projectExpenses, overheads: officeOverheads, projectConfig: projectConfig };
+                const payload = { shareholders: shareholders, projects: projects, projectIncomes: projectIncomes, expenses: projectExpenses, overheads: officeOverheads, projectConfig: projectConfig };
 
                 await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
                     method: 'PATCH',
@@ -726,6 +802,7 @@
                 if (data) {
                     if(data.shareholders) shareholders = data.shareholders;
                     if(data.projects) projects = data.projects;
+                    if(data.projectIncomes) projectIncomes = data.projectIncomes;
                     if(data.expenses) projectExpenses = data.expenses;
                     if(data.overheads) officeOverheads = data.overheads;
                     if(data.projectConfig) projectConfig = data.projectConfig;
@@ -741,7 +818,7 @@
     <!-- 4. CORE UPGRADED EBS ERP LOGIC -->
     <script>
         const DEFAULT_PIN = "1234";
-        let userPIN = localStorage.getItem('ebsErpPIN_v5') || DEFAULT_PIN;
+        let userPIN = localStorage.getItem('ebsErpPIN_v6') || DEFAULT_PIN;
 
         const loginScreen = document.getElementById('login-screen');
         const appScreen = document.getElementById('app-screen');
@@ -749,12 +826,12 @@
         const pinInput = document.getElementById('pin-input');
         const loginError = document.getElementById('login-error');
 
-        if (sessionStorage.getItem('isEbsLoggedIn_v5') === 'true') { showApp(); }
+        if (sessionStorage.getItem('isEbsLoggedIn_v6') === 'true') { showApp(); }
 
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             if (pinInput.value === userPIN) {
-                sessionStorage.setItem('isEbsLoggedIn_v5', 'true');
+                sessionStorage.setItem('isEbsLoggedIn_v6', 'true');
                 loginError.classList.add('hidden');
                 showApp();
             } else {
@@ -769,7 +846,7 @@
             renderAll();
         }
 
-        function logout() { sessionStorage.removeItem('isEbsLoggedIn_v5'); location.reload(); }
+        function logout() { sessionStorage.removeItem('isEbsLoggedIn_v6'); location.reload(); }
 
         function changePIN() {
             const current = prompt("Enter Current PIN:");
@@ -777,7 +854,7 @@
                 const newPIN = prompt("Enter NEW PIN (Min 4 digits):");
                 if (newPIN && newPIN.trim().length >= 4) {
                     userPIN = newPIN.trim();
-                    localStorage.setItem('ebsErpPIN_v5', userPIN);
+                    localStorage.setItem('ebsErpPIN_v6', userPIN);
                     alert("PIN Changed Successfully!");
                 } else { alert("PIN must be at least 4 digits!"); }
             } else if (current !== null) { alert("Current PIN Incorrect!"); }
@@ -801,29 +878,26 @@
             { name: "Shareholder 7", capital: 0, defaultPct: 14.32 }
         ];
 
-        let shareholders = JSON.parse(localStorage.getItem('ebsShareholdersV5')) || defaultShareholders;
-        let projects = JSON.parse(localStorage.getItem('ebsProjectsV5')) || [];
-        let projectExpenses = JSON.parse(localStorage.getItem('ebsExpensesV5')) || [];
-        let officeOverheads = JSON.parse(localStorage.getItem('ebsOverheadsV5')) || [];
-        let projectConfig = JSON.parse(localStorage.getItem('ebsProjectConfigV5')) || {}; 
+        let shareholders = JSON.parse(localStorage.getItem('ebsShareholdersV6')) || defaultShareholders;
+        let projects = JSON.parse(localStorage.getItem('ebsProjectsV6')) || [];
+        let projectIncomes = JSON.parse(localStorage.getItem('ebsIncomesV6')) || [];
+        let projectExpenses = JSON.parse(localStorage.getItem('ebsExpensesV6')) || [];
+        let officeOverheads = JSON.parse(localStorage.getItem('ebsOverheadsV6')) || [];
+        let projectConfig = JSON.parse(localStorage.getItem('ebsProjectConfigV6')) || {}; 
 
         let growthChart = null;
         const formatMoney = (num) => Number(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
         function saveLocal() {
-            localStorage.setItem('ebsShareholdersV5', JSON.stringify(shareholders));
-            localStorage.setItem('ebsProjectsV5', JSON.stringify(projects));
-            localStorage.setItem('ebsExpensesV5', JSON.stringify(projectExpenses));
-            localStorage.setItem('ebsOverheadsV5', JSON.stringify(officeOverheads));
-            localStorage.setItem('ebsProjectConfigV5', JSON.stringify(projectConfig));
+            localStorage.setItem('ebsShareholdersV6', JSON.stringify(shareholders));
+            localStorage.setItem('ebsProjectsV6', JSON.stringify(projects));
+            localStorage.setItem('ebsIncomesV6', JSON.stringify(projectIncomes));
+            localStorage.setItem('ebsExpensesV6', JSON.stringify(projectExpenses));
+            localStorage.setItem('ebsOverheadsV6', JSON.stringify(officeOverheads));
+            localStorage.setItem('ebsProjectConfigV6', JSON.stringify(projectConfig));
         }
 
         function saveAndSync() { saveLocal(); syncToDrive(); }
-
-        function toggleBondInputs() {
-            const noBond = document.getElementById('pNoBondCheck').checked;
-            document.getElementById('bondInputsBox').style.display = noBond ? 'none' : 'block';
-        }
 
         function autoCalcExpenseBalance() {
             const est = parseFloat(document.getElementById('expEst').value) || 0;
@@ -839,39 +913,78 @@
             document.getElementById('ohBalancePreview').innerText = formatMoney(bal >= 0 ? bal : 0);
         }
 
-        // Add / Edit Project
+        // Add / Edit Project Base
         document.getElementById('project-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const editIdx = parseInt(document.getElementById('editProjectIndex').value);
-            const noBond = document.getElementById('pNoBondCheck').checked;
 
-            const projObj = {
-                title: document.getElementById('pTitle').value,
-                value: parseFloat(document.getElementById('pValue').value) || 0,
-                source: document.getElementById('pSource').value,
-                startDate: document.getElementById('pStartDate').value,
-                endDate: document.getElementById('pEndDate').value,
-                noBond: noBond,
-                bondType: noBond ? 'No Bond Required' : (document.getElementById('pBondType').value || 'Performance Guarantee'),
-                bondValue: noBond ? 0 : (parseFloat(document.getElementById('pBondValue').value) || 0),
-                bondExpiry: noBond ? '' : document.getElementById('pBondExpiry').value
-            };
-
-            if (editIdx >= 0) { projects[editIdx] = projObj; } 
-            else { 
-                projects.push(projObj); 
-                projectConfig[projObj.title] = { retentionPct: 10, shares: {} };
-                shareholders.forEach(s => { projectConfig[projObj.title].shares[s.name] = s.defaultPct; });
+            if (editIdx >= 0) {
+                projects[editIdx].title = document.getElementById('pTitle').value;
+                projects[editIdx].value = parseFloat(document.getElementById('pValue').value) || 0;
+                projects[editIdx].source = document.getElementById('pSource').value;
+                projects[editIdx].startDate = document.getElementById('pStartDate').value;
+                projects[editIdx].endDate = document.getElementById('pEndDate').value;
+            } else { 
+                const newProj = {
+                    title: document.getElementById('pTitle').value,
+                    value: parseFloat(document.getElementById('pValue').value) || 0,
+                    source: document.getElementById('pSource').value,
+                    startDate: document.getElementById('pStartDate').value,
+                    endDate: document.getElementById('pEndDate').value,
+                    bonds: []
+                };
+                projects.push(newProj); 
+                projectConfig[newProj.title] = { retentionPct: 10, shares: {} };
+                shareholders.forEach(s => { projectConfig[newProj.title].shares[s.name] = s.defaultPct; });
             }
 
             this.reset();
             document.getElementById('editProjectIndex').value = -1;
-            toggleBondInputs();
             saveAndSync();
             renderAll();
         });
 
-        // Add / Edit Expense
+        // Add Bond to Project
+        document.getElementById('bond-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const pTitle = document.getElementById('bondProjectSelect').value;
+            const proj = projects.find(p => p.title === pTitle);
+            if (proj) {
+                if (!proj.bonds) proj.bonds = [];
+                proj.bonds.push({
+                    type: document.getElementById('bType').value,
+                    value: parseFloat(document.getElementById('bValue').value) || 0,
+                    expiry: document.getElementById('bExpiry').value
+                });
+                this.reset();
+                saveAndSync();
+                renderAll();
+            }
+        });
+
+        // Add / Edit Client Income Receipts
+        document.getElementById('income-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const editIdx = parseInt(document.getElementById('editIncomeIndex').value);
+
+            const incObj = {
+                project: document.getElementById('incProject').value,
+                type: document.getElementById('incType').value,
+                date: document.getElementById('incDate').value,
+                amount: parseFloat(document.getElementById('incAmount').value) || 0,
+                note: document.getElementById('incNote').value || ''
+            };
+
+            if (editIdx >= 0) { projectIncomes[editIdx] = incObj; } 
+            else { projectIncomes.push(incObj); }
+
+            this.reset();
+            document.getElementById('editIncomeIndex').value = -1;
+            saveAndSync();
+            renderAll();
+        });
+
+        // Add / Edit Site Expense
         document.getElementById('expense-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const editIdx = parseInt(document.getElementById('editExpenseIndex').value);
@@ -926,18 +1039,19 @@
 
         function renderAll() {
             let totalCapital = shareholders.reduce((acc, curr) => acc + curr.capital, 0);
-            let totalProjectIncome = projects.reduce((acc, curr) => acc + curr.value, 0);
+            let totalActualReceivedIncome = projectIncomes.reduce((acc, curr) => acc + curr.amount, 0);
             let totalSiteExpensesPaid = projectExpenses.reduce((acc, curr) => acc + curr.paid, 0);
             let totalOfficeOverheadsPaid = officeOverheads.reduce((acc, curr) => acc + (curr.paid !== undefined ? curr.paid : curr.amount || 0), 0);
 
             let totalAllExpensesPaid = totalSiteExpensesPaid + totalOfficeOverheadsPaid;
-            let netCompanyProfit = totalProjectIncome - totalAllExpensesPaid;
+            let netCompanyProfit = totalActualReceivedIncome - totalAllExpensesPaid;
 
             // Calculate Total Retention Reserve across all projects
             let totalRetentionReserve = 0;
             projects.forEach(p => {
+                let pIncomeReceived = projectIncomes.filter(i => i.project === p.title).reduce((acc, curr) => acc + curr.amount, 0);
                 let pExpenses = projectExpenses.filter(e => e.project === p.title).reduce((acc, curr) => acc + curr.paid + curr.pending, 0);
-                let pProfit = p.value - pExpenses;
+                let pProfit = pIncomeReceived - pExpenses;
                 let rPct = (projectConfig[p.title] && projectConfig[p.title].retentionPct !== undefined) ? projectConfig[p.title].retentionPct : 10;
                 if (pProfit > 0) {
                     totalRetentionReserve += (pProfit * (rPct / 100));
@@ -946,7 +1060,7 @@
 
             // Update Dashboard Overview Widgets
             document.getElementById('dash-capital').innerText = formatMoney(totalCapital);
-            document.getElementById('dash-income').innerText = formatMoney(totalProjectIncome);
+            document.getElementById('dash-income').innerText = formatMoney(totalActualReceivedIncome);
             document.getElementById('dash-expenses').innerText = formatMoney(totalAllExpensesPaid);
             document.getElementById('dash-total-retention-reserve').innerText = formatMoney(totalRetentionReserve);
             document.getElementById('dash-net-profit').innerText = formatMoney(netCompanyProfit);
@@ -960,11 +1074,12 @@
             renderShareholdersTable();
             renderCustomProjectShares();
             renderProjectsTable();
+            renderIncomeTable();
             renderExpensesTable();
             renderOverheadsTable();
             renderUpcomingTable();
 
-            renderGrowthChart(totalProjectIncome, totalSiteExpensesPaid, totalOfficeOverheadsPaid, netCompanyProfit);
+            renderGrowthChart(totalActualReceivedIncome, totalSiteExpensesPaid, totalOfficeOverheadsPaid, netCompanyProfit);
         }
 
         function populateDropdowns() {
@@ -972,6 +1087,8 @@
             const fSelect = document.getElementById('filterProjectSelect');
             const pSelect = document.getElementById('expProject');
             const sSelect = document.getElementById('shareProjectSelect');
+            const bSelect = document.getElementById('bondProjectSelect');
+            const incSelect = document.getElementById('incProject');
 
             const currDFilter = dFilter.value;
             const currFFilter = fSelect.value;
@@ -981,12 +1098,16 @@
             fSelect.innerHTML = `<option value="ALL">Show ALL Projects Ledger</option>`;
             pSelect.innerHTML = '';
             sSelect.innerHTML = '';
+            bSelect.innerHTML = '';
+            incSelect.innerHTML = '';
 
             projects.forEach(p => {
                 dFilter.innerHTML += `<option value="${p.title}">${p.title}</option>`;
                 fSelect.innerHTML += `<option value="${p.title}">${p.title}</option>`;
                 pSelect.innerHTML += `<option value="${p.title}">${p.title}</option>`;
                 sSelect.innerHTML += `<option value="${p.title}">${p.title}</option>`;
+                bSelect.innerHTML += `<option value="${p.title}">${p.title}</option>`;
+                incSelect.innerHTML += `<option value="${p.title}">${p.title}</option>`;
             });
 
             if(currDFilter) dFilter.value = currDFilter;
@@ -1003,32 +1124,33 @@
             projects.forEach(p => {
                 if (filterVal !== "ALL" && p.title !== filterVal) return;
 
-                let pExpenses = projectExpenses.filter(e => e.project === p.title).reduce((acc, curr) => acc + curr.paid + curr.pending, 0);
-                let pProfit = p.value - pExpenses;
-                let rPct = (projectConfig[p.title] && projectConfig[p.title].retentionPct !== undefined) ? projectConfig[p.title].retentionPct : 10;
-                let pRetentionMoney = pProfit > 0 ? (pProfit * (rPct / 100)) : 0;
+                let pIncomeReceived = projectIncomes.filter(i => i.project === p.title).reduce((acc, curr) => acc + curr.amount, 0);
+                let pExpensesPaid = projectExpenses.filter(e => e.project === p.title).reduce((acc, curr) => acc + curr.paid, 0);
+                let pNetProfit = pIncomeReceived - pExpensesPaid;
 
-                let bondStatusHtml = `<span class="text-slate-500 font-bold">No Bond Required</span>`;
-                if (!p.noBond && p.bondExpiry) {
-                    let expDate = new Date(p.bondExpiry);
-                    let diffDays = Math.ceil((expDate - today) / (1000 * 60 * 60 * 24));
-                    if (diffDays < 0) {
-                        bondStatusHtml = `<span class="bond-expired px-2 py-0.5 rounded font-bold text-[10px]"><i class="fas fa-circle-exclamation"></i> ${p.bondType || 'Bond'} EXPIRED (${p.bondExpiry})</span>`;
-                    } else if (diffDays <= 30) {
-                        bondStatusHtml = `<span class="bond-warning px-2 py-0.5 rounded font-bold text-[10px]"><i class="fas fa-triangle-exclamation"></i> ${p.bondType || 'Bond'} Expires in ${diffDays} Days</span>`;
-                    } else {
-                        bondStatusHtml = `<span class="text-emerald-400 font-bold text-[10px]"><i class="fas fa-circle-check"></i> ${p.bondType || 'Bond'} Valid (${p.bondExpiry})</span>`;
-                    }
+                let bondStatusHtml = `<span class="text-slate-400 font-bold text-[10px]">No Bonds</span>`;
+                if (p.bonds && p.bonds.length > 0) {
+                    bondStatusHtml = p.bonds.map(b => {
+                        let expDate = new Date(b.expiry);
+                        let diffDays = Math.ceil((expDate - today) / (1000 * 60 * 60 * 24));
+                        if (diffDays < 0) {
+                            return `<span class="bond-expired px-1.5 py-0.5 rounded font-bold text-[9px] block mb-1">${b.type}: EXPIRED</span>`;
+                        } else if (diffDays <= 30) {
+                            return `<span class="bond-warning px-1.5 py-0.5 rounded font-bold text-[9px] block mb-1">${b.type}: ${diffDays}d Left</span>`;
+                        } else {
+                            return `<span class="text-emerald-400 font-bold text-[9px] block mb-1"><i class="fas fa-circle-check"></i> ${b.type} (${b.expiry})</span>`;
+                        }
+                    }).join('');
                 }
 
                 let tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-800/40 transition";
                 tr.innerHTML = `
                     <td class="p-3"><span class="font-bold text-white">${p.title}</span><br><span class="text-[10px] text-cyan-400 font-semibold">${p.source}</span></td>
-                    <td class="p-3 text-right font-mono text-cyan-400">Rs. ${formatMoney(p.value)}</td>
-                    <td class="p-3 text-right font-mono text-rose-400">Rs. ${formatMoney(pExpenses)}</td>
-                    <td class="p-3 text-right font-mono text-emerald-400 font-bold">Rs. ${formatMoney(pProfit)}</td>
-                    <td class="p-3 text-right font-mono text-purple-400 font-bold">Rs. ${formatMoney(pRetentionMoney)} <span class="text-[9px] text-slate-500">(${rPct}%)</span></td>
+                    <td class="p-3 text-right font-mono text-slate-300">Rs. ${formatMoney(p.value)}</td>
+                    <td class="p-3 text-right font-mono text-cyan-400 font-bold">Rs. ${formatMoney(pIncomeReceived)}</td>
+                    <td class="p-3 text-right font-mono text-rose-400">Rs. ${formatMoney(pExpensesPaid)}</td>
+                    <td class="p-3 text-right font-mono text-emerald-400 font-bold">Rs. ${formatMoney(pNetProfit)}</td>
                     <td class="p-3 text-center">${bondStatusHtml}</td>
                 `;
                 dBody.appendChild(tr);
@@ -1061,7 +1183,7 @@
             editorBox.innerHTML = '';
 
             if (!selectedProjTitle || projects.length === 0) {
-                editorBox.innerHTML = `<p class="text-xs text-slate-500 font-bold">කරුණාකර පළමුව Project එකක් එකතු කරන්න.</p>`;
+                editorBox.innerHTML = `<p class="text-xs text-slate-400 font-bold">කරුණාකර පළමුව Project එකක් එකතු කරන්න.</p>`;
                 return;
             }
 
@@ -1071,9 +1193,9 @@
             }
 
             const pCfg = projectConfig[selectedProjTitle];
-            const pObj = projects.find(p => p.title === selectedProjTitle);
+            let pIncomeReceived = projectIncomes.filter(i => i.project === selectedProjTitle).reduce((acc, curr) => acc + curr.amount, 0);
             let pExpenses = projectExpenses.filter(e => e.project === selectedProjTitle).reduce((acc, curr) => acc + curr.paid + curr.pending, 0);
-            let pProfit = (pObj ? pObj.value : 0) - pExpenses;
+            let pProfit = pIncomeReceived - pExpenses;
 
             let compReserveMoney = pProfit > 0 ? pProfit * (pCfg.retentionPct / 100) : 0;
             let distributableProfit = pProfit - compReserveMoney;
@@ -1082,7 +1204,7 @@
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800 pb-3">
                     <div>
                         <h4 class="text-xs font-black text-white">${selectedProjTitle} - Profit Allocation Settings</h4>
-                        <p class="text-[11px] text-slate-400">Total Project Profit: <span class="font-mono text-emerald-400 font-bold">Rs. ${formatMoney(pProfit)}</span></p>
+                        <p class="text-[11px] text-slate-300">Actual Income Received: <span class="font-mono text-cyan-400 font-bold">Rs. ${formatMoney(pIncomeReceived)}</span> | Current Net Profit: <span class="font-mono text-emerald-400 font-bold">Rs. ${formatMoney(pProfit)}</span></p>
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="text-xs text-purple-300 font-bold">Company Reserve (${pCfg.retentionPct}%): <strong class="font-mono text-purple-400">Rs. ${formatMoney(compReserveMoney)}</strong></span>
@@ -1106,7 +1228,7 @@
                         </div>
                         <div class="flex items-center gap-1">
                             <input type="number" id="sPct_${selectedProjTitle}_${s.name}" value="${currentPct}" min="0" max="100" class="w-16 rounded-lg p-1 text-xs font-mono neo-input text-center">
-                            <span class="text-xs text-slate-400 font-bold">%</span>
+                            <span class="text-xs text-slate-300 font-bold">%</span>
                             <button onclick="saveIndividualSharePct('${selectedProjTitle}', '${s.name}')" class="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold px-2 py-1 rounded-lg text-[10px]">Set</button>
                         </div>
                     </div>
@@ -1136,20 +1258,16 @@
         function renderProjectsTable() {
             const pBody = document.getElementById('project-table-body');
             pBody.innerHTML = '';
-            const today = new Date();
 
             projects.forEach((p, idx) => {
-                let bondStatusHtml = `<span class="text-slate-500 font-bold">No Bond Required</span>`;
-                if (!p.noBond && p.bondExpiry) {
-                    let expDate = new Date(p.bondExpiry);
-                    let diffDays = Math.ceil((expDate - today) / (1000 * 60 * 60 * 24));
-                    if (diffDays < 0) {
-                        bondStatusHtml = `<span class="bond-expired px-2 py-0.5 rounded font-bold text-[10px]"><i class="fas fa-circle-exclamation"></i> ${p.bondType} EXPIRED</span>`;
-                    } else if (diffDays <= 30) {
-                        bondStatusHtml = `<span class="bond-warning px-2 py-0.5 rounded font-bold text-[10px]"><i class="fas fa-triangle-exclamation"></i> ${p.bondType} (${diffDays} Days Left)</span>`;
-                    } else {
-                        bondStatusHtml = `<span class="text-emerald-400 font-bold text-[10px]"><i class="fas fa-circle-check"></i> ${p.bondType} Valid</span>`;
-                    }
+                let bondHtml = `<span class="text-slate-400 font-bold text-[10px]">No Active Bonds</span>`;
+                if (p.bonds && p.bonds.length > 0) {
+                    bondHtml = p.bonds.map((b, bIdx) => `
+                        <div class="flex justify-between items-center bg-slate-900 p-1 px-2 rounded my-1 border border-slate-800">
+                            <span class="text-[10px] text-amber-400 font-bold">${b.type} (Rs. ${formatMoney(b.value)}) - Exp: ${b.expiry}</span>
+                            <button onclick="deleteBond(${idx}, ${bIdx})" class="text-rose-400 text-[10px] ml-2 no-print"><i class="fas fa-times"></i></button>
+                        </div>
+                    `).join('');
                 }
 
                 let tr = document.createElement('tr');
@@ -1157,13 +1275,33 @@
                 tr.innerHTML = `
                     <td class="p-3"><span class="font-bold text-white">${p.title}</span><br><span class="text-[10px] text-cyan-400 font-semibold">${p.source}</span></td>
                     <td class="p-3 text-right font-mono text-cyan-400">Rs. ${formatMoney(p.value)}</td>
-                    <td class="p-3 text-center"><span class="text-[11px] text-slate-400 font-mono">${p.startDate || '-'} to ${p.endDate || '-'}</span><br>${bondStatusHtml}</td>
+                    <td class="p-3"><span class="text-[11px] text-slate-300 font-mono block text-center">${p.startDate || '-'} to ${p.endDate || '-'}</span>${bondHtml}</td>
                     <td class="p-3 text-center no-print">
                         <button onclick="editProject(${idx})" class="text-xs bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 px-2 py-1 rounded-lg font-bold"><i class="fas fa-edit"></i> Edit</button>
                         <button onclick="deleteProject(${idx})" class="text-xs text-rose-400 hover:text-rose-300 ml-1"><i class="fas fa-trash-alt"></i></button>
                     </td>
                 `;
                 pBody.appendChild(tr);
+            });
+        }
+
+        function renderIncomeTable() {
+            const incBody = document.getElementById('income-table-body');
+            incBody.innerHTML = '';
+
+            projectIncomes.forEach((inc, idx) => {
+                let tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-800/40 transition";
+                tr.innerHTML = `
+                    <td class="p-3"><span class="font-bold text-white">${inc.type}</span><br><span class="text-[10px] text-cyan-400 font-semibold">${inc.project} ${inc.note ? ' - '+inc.note : ''}</span></td>
+                    <td class="p-3 text-center font-mono text-slate-300">${inc.date}</td>
+                    <td class="p-3 text-right font-mono text-emerald-400 font-bold">Rs. ${formatMoney(inc.amount)}</td>
+                    <td class="p-3 text-center no-print">
+                        <button onclick="editIncome(${idx})" class="text-xs bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 px-2 py-1 rounded-lg font-bold"><i class="fas fa-edit"></i> Edit</button>
+                        <button onclick="deleteIncome(${idx})" class="text-xs text-rose-400 hover:text-rose-300 ml-1"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                `;
+                incBody.appendChild(tr);
             });
         }
 
@@ -1179,7 +1317,7 @@
                 tr.className = "hover:bg-slate-800/40 transition";
                 tr.innerHTML = `
                     <td class="p-3"><span class="font-bold text-white">${e.name}</span><br><span class="text-[10px] text-cyan-400 font-semibold">${e.project}</span></td>
-                    <td class="p-3 text-right font-mono text-slate-400">Rs. ${formatMoney(e.est || 0)}</td>
+                    <td class="p-3 text-right font-mono text-slate-300">Rs. ${formatMoney(e.est || 0)}</td>
                     <td class="p-3 text-right font-mono text-emerald-400 font-bold">Rs. ${formatMoney(e.paid)}</td>
                     <td class="p-3 text-right font-mono text-rose-400 font-bold">Rs. ${formatMoney(e.pending)}</td>
                     <td class="p-3 text-center no-print flex justify-center gap-1">
@@ -1205,7 +1343,7 @@
                 tr.className = "hover:bg-slate-800/40 transition";
                 tr.innerHTML = `
                     <td class="p-3"><span class="font-bold text-white">${o.desc}</span><br><span class="text-[10px] text-purple-400 font-semibold">${o.category} (${o.date})</span></td>
-                    <td class="p-3 text-right font-mono text-slate-400">Rs. ${formatMoney(estVal)}</td>
+                    <td class="p-3 text-right font-mono text-slate-300">Rs. ${formatMoney(estVal)}</td>
                     <td class="p-3 text-right font-mono text-emerald-400 font-bold">Rs. ${formatMoney(paidVal)}</td>
                     <td class="p-3 text-right font-mono text-rose-400 font-bold">Rs. ${formatMoney(pendingVal)}</td>
                     <td class="p-3 text-center no-print">
@@ -1232,7 +1370,7 @@
                     tr.innerHTML = `
                         <td class="p-3 font-bold text-cyan-400">Site: ${e.project}</td>
                         <td class="p-3 font-bold text-white">${e.name}</td>
-                        <td class="p-3 text-right font-mono text-slate-400">Rs. ${formatMoney(e.est)}</td>
+                        <td class="p-3 text-right font-mono text-slate-300">Rs. ${formatMoney(e.est)}</td>
                         <td class="p-3 text-right font-mono text-emerald-400">Rs. ${formatMoney(e.paid)}</td>
                         <td class="p-3 text-right font-mono text-rose-400 font-bold">Rs. ${formatMoney(e.pending)}</td>
                     `;
@@ -1253,7 +1391,7 @@
                     tr.innerHTML = `
                         <td class="p-3 font-bold text-purple-400">Office Overhead</td>
                         <td class="p-3 font-bold text-white">${o.desc} (${o.category})</td>
-                        <td class="p-3 text-right font-mono text-slate-400">Rs. ${formatMoney(estVal)}</td>
+                        <td class="p-3 text-right font-mono text-slate-300">Rs. ${formatMoney(estVal)}</td>
                         <td class="p-3 text-right font-mono text-emerald-400">Rs. ${formatMoney(paidVal)}</td>
                         <td class="p-3 text-right font-mono text-rose-400 font-bold">Rs. ${formatMoney(pendingVal)}</td>
                     `;
@@ -1266,8 +1404,16 @@
             document.getElementById('upcoming-grand-total').innerText = formatMoney(totalSitePayables + totalOhPayables);
             
             const today = new Date();
-            let warningBonds = projects.filter(p => !p.noBond && p.bondExpiry && (Math.ceil((new Date(p.bondExpiry) - today)/(1000*60*60*24)) <= 30)).length;
-            document.getElementById('upcoming-bond-warning-count').innerText = warningBonds;
+            let warningBondsCount = 0;
+            projects.forEach(p => {
+                if (p.bonds) {
+                    p.bonds.forEach(b => {
+                        let diffDays = Math.ceil((new Date(b.expiry) - today) / (1000 * 60 * 60 * 24));
+                        if (diffDays <= 30) warningBondsCount++;
+                    });
+                }
+            });
+            document.getElementById('upcoming-bond-warning-count').innerText = warningBondsCount;
         }
 
         function generatePayeeInvoice(payeeName) {
@@ -1281,8 +1427,8 @@
             let html = `
                 <div class="text-center border-b-2 border-slate-950 pb-4">
                     <h2 class="text-xl font-black tracking-tight text-slate-950 uppercase">EXPERT BUILD SOLUTION (PVT) LTD</h2>
-                    <p class="text-xs text-slate-600 font-bold">CUMULATIVE CONTRACTOR / SUPPLIER STATEMENT & INVOICE</p>
-                    <p class="text-[10px] text-slate-500 mt-1">Date Generated: ${new Date().toLocaleDateString()}</p>
+                    <p class="text-xs text-slate-700 font-bold">CUMULATIVE CONTRACTOR / SUPPLIER STATEMENT & INVOICE</p>
+                    <p class="text-[10px] text-slate-600 mt-1">Date Generated: ${new Date().toLocaleDateString()}</p>
                 </div>
 
                 <div class="p-3 bg-slate-100 rounded-lg text-xs space-y-1">
@@ -1308,7 +1454,7 @@
                         <td class="p-2 border border-slate-300 font-bold">${r.project}</td>
                         <td class="p-2 text-right border border-slate-300 font-mono">Rs. ${formatMoney(r.est)}</td>
                         <td class="p-2 text-right border border-slate-300 font-mono">Rs. ${formatMoney(r.paid)}</td>
-                        <td class="p-2 text-right border border-slate-300 font-mono text-rose-600 font-bold">Rs. ${formatMoney(r.pending)}</td>
+                        <td class="p-2 text-right border border-slate-300 font-mono text-rose-700 font-bold">Rs. ${formatMoney(r.pending)}</td>
                     </tr>
                 `;
             });
@@ -1334,7 +1480,12 @@
         }
 
         function closeInvoiceModal() { document.getElementById('invoice-modal').classList.add('hidden'); }
-        function printInvoice() { window.print(); }
+        
+        function printInvoice() {
+            document.body.classList.add('printing-invoice');
+            window.print();
+            document.body.classList.remove('printing-invoice');
+        }
 
         function renderGrowthChart(income, siteExp, overheads, netProfit) {
             const ctx = document.getElementById('growthChart').getContext('2d');
@@ -1343,7 +1494,7 @@
             growthChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['Projects Gross Income', 'Site Expenses Paid', 'Office Overheads Paid', 'Net Company Profit'],
+                    labels: ['Actual Received Income', 'Site Expenses Paid', 'Office Overheads Paid', 'Net Company Profit'],
                     datasets: [{
                         label: 'Financial Performance (Rs)',
                         data: [income, siteExp, overheads, netProfit],
@@ -1354,7 +1505,7 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: { y: { ticks: { color: '#94a3b8' } }, x: { ticks: { color: '#94a3b8' } } }
+                    scales: { y: { ticks: { color: '#cbd5e1' } }, x: { ticks: { color: '#cbd5e1' } } }
                 }
             });
         }
@@ -1367,12 +1518,26 @@
             document.getElementById('pSource').value = p.source;
             document.getElementById('pStartDate').value = p.startDate;
             document.getElementById('pEndDate').value = p.endDate;
-            document.getElementById('pNoBondCheck').checked = p.noBond || false;
-            document.getElementById('pBondType').value = p.bondType || '';
-            document.getElementById('pBondValue').value = p.bondValue || '';
-            document.getElementById('pBondExpiry').value = p.bondExpiry || '';
-            toggleBondInputs();
             document.getElementById('project-form-title').innerHTML = `<i class="fas fa-edit text-amber-400"></i> Edit Project Details`;
+        }
+
+        function deleteBond(pIdx, bIdx) {
+            if(confirm("Remove this bond?")) {
+                projects[pIdx].bonds.splice(bIdx, 1);
+                saveAndSync();
+                renderAll();
+            }
+        }
+
+        function editIncome(idx) {
+            const inc = projectIncomes[idx];
+            document.getElementById('editIncomeIndex').value = idx;
+            document.getElementById('incProject').value = inc.project;
+            document.getElementById('incType').value = inc.type;
+            document.getElementById('incDate').value = inc.date;
+            document.getElementById('incAmount').value = inc.amount;
+            document.getElementById('incNote').value = inc.note || '';
+            document.getElementById('income-form-title').innerHTML = `<i class="fas fa-edit text-amber-400"></i> Edit Client Receipt`;
         }
 
         function editExpense(idx) {
@@ -1437,6 +1602,14 @@
             }
         }
 
+        function deleteIncome(idx) {
+            if(confirm("Are you sure you want to delete this client receipt?")) {
+                projectIncomes.splice(idx, 1);
+                saveAndSync();
+                renderAll();
+            }
+        }
+
         function deleteExpense(idx) {
             if(confirm("Are you sure you want to delete this ledger entry?")) {
                 projectExpenses.splice(idx, 1);
@@ -1456,6 +1629,7 @@
         function clearAllData() {
             if(confirm("WARNING: This will reset all records. Continue?")) {
                 projects = [];
+                projectIncomes = [];
                 projectExpenses = [];
                 officeOverheads = [];
                 shareholders = defaultShareholders;
