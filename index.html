@@ -628,8 +628,8 @@
 
     <!-- 3. GOOGLE DRIVE APPDATA AUTO-SYNC ENGINE -->
     <script>
-        const GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"; 
-        const SCOPES = "121225169916-0ep54f7ls5ht5u972p7b2qdfttjug54r.apps.googleusercontent.com";
+        const GOOGLE_CLIENT_ID = "121225169916-0ep54f7ls5ht5u972p7b2qdfttjug54r.apps.googleusercontent.com"; 
+        const SCOPES = "https://www.googleapis.com/auth/drive.appdata";
 
         let tokenClient;
         let gAccessToken = localStorage.getItem('g_drive_token_ebs_v5') || null;
