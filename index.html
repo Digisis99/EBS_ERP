@@ -185,26 +185,31 @@
 
         <!-- TAB 1: EXECUTIVE DASHBOARD & GROWTH -->
         <div id="tab-dashboard" class="tab-content space-y-6">
-            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                <div class="erp-card p-5 border-l-4 border-l-amber-400">
-                    <span class="text-xs font-bold uppercase text-slate-400 tracking-wider">Total Share Capital</span>
-                    <div class="text-2xl font-black text-amber-400 font-mono mt-1">Rs. <span id="dash-capital">0.00</span></div>
-                    <p class="text-[11px] text-slate-500 mt-1">හවුල්කරුවන් තැන්පත් කළ මුදල</p>
+            <div class="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                <div class="erp-card p-4 border-l-4 border-l-amber-400">
+                    <span class="text-[11px] font-bold uppercase text-slate-400 tracking-wider">Total Share Capital</span>
+                    <div class="text-xl font-black text-amber-400 font-mono mt-1">Rs. <span id="dash-capital">0.00</span></div>
+                    <p class="text-[10px] text-slate-500 mt-1">තැන්පත් කළ මුදල</p>
                 </div>
-                <div class="erp-card p-5 border-l-4 border-l-cyan-400">
-                    <span class="text-xs font-bold uppercase text-slate-400 tracking-wider">Total Projects Income</span>
-                    <div class="text-2xl font-black text-cyan-400 font-mono mt-1">Rs. <span id="dash-income">0.00</span></div>
-                    <p class="text-[11px] text-slate-500 mt-1">සියලුම Projects වලින් ලැබෙන මුළු ආදායම</p>
+                <div class="erp-card p-4 border-l-4 border-l-cyan-400">
+                    <span class="text-[11px] font-bold uppercase text-slate-400 tracking-wider">Total Projects Income</span>
+                    <div class="text-xl font-black text-cyan-400 font-mono mt-1">Rs. <span id="dash-income">0.00</span></div>
+                    <p class="text-[10px] text-slate-500 mt-1">Projects මුළු ආදායම</p>
                 </div>
-                <div class="erp-card p-5 border-l-4 border-l-rose-400">
-                    <span class="text-xs font-bold uppercase text-slate-400 tracking-wider">Overhead & Site Expenses</span>
-                    <div class="text-2xl font-black text-rose-400 font-mono mt-1">Rs. <span id="dash-expenses">0.00</span></div>
-                    <p class="text-[11px] text-slate-500 mt-1">Site + Office Overhead මුළු වියදම</p>
+                <div class="erp-card p-4 border-l-4 border-l-rose-400">
+                    <span class="text-[11px] font-bold uppercase text-slate-400 tracking-wider">Total Expenses</span>
+                    <div class="text-xl font-black text-rose-400 font-mono mt-1">Rs. <span id="dash-expenses">0.00</span></div>
+                    <p class="text-[10px] text-slate-500 mt-1">Site + Overhead වියදම</p>
                 </div>
-                <div class="erp-card p-5 border-l-4 border-l-emerald-400">
-                    <span class="text-xs font-bold uppercase text-slate-400 tracking-wider">Company Net Profit</span>
-                    <div class="text-2xl font-black text-emerald-400 font-mono mt-1">Rs. <span id="dash-net-profit">0.00</span></div>
-                    <p class="text-[11px] text-slate-500 mt-1">Overheads කැපීමෙන් පසු ශුද්ධ ලාභය</p>
+                <div class="erp-card p-4 border-l-4 border-l-purple-400 bg-purple-500/5">
+                    <span class="text-[11px] font-bold uppercase text-purple-300 tracking-wider">Total Retention Reserve</span>
+                    <div class="text-xl font-black text-purple-400 font-mono mt-1">Rs. <span id="dash-total-retention-reserve">0.00</span></div>
+                    <p class="text-[10px] text-purple-300/70 mt-1">Company එකේ මුළු ඉතිරි Balance එක</p>
+                </div>
+                <div class="erp-card p-4 border-l-4 border-l-emerald-400">
+                    <span class="text-[11px] font-bold uppercase text-slate-400 tracking-wider">Company Net Profit</span>
+                    <div class="text-xl font-black text-emerald-400 font-mono mt-1">Rs. <span id="dash-net-profit">0.00</span></div>
+                    <p class="text-[10px] text-slate-500 mt-1">සියලු කැපීම් පසු ශුද්ධ ලාභය</p>
                 </div>
             </div>
 
@@ -233,6 +238,7 @@
                                 <th class="p-3 text-right">Contract Value</th>
                                 <th class="p-3 text-right">Site Expenses</th>
                                 <th class="p-3 text-right">Project Profit</th>
+                                <th class="p-3 text-right">Company Retention Reserve</th>
                                 <th class="p-3 text-center">Bond Type & Status</th>
                             </tr>
                         </thead>
@@ -268,8 +274,8 @@
                 <div class="pt-6 border-t border-slate-800 space-y-4">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                            <h3 class="text-sm font-bold text-cyan-400 flex items-center gap-2"><i class="fas fa-sitemap"></i> Custom Project-Specific Share & Retention Allocator</h3>
-                            <p class="text-xs text-slate-400">එක් එක් Project එකට අදාළව Shareholders ලාගේ Share % එක සහ Company Reserve % වෙන වෙනම Edit කිරීමට පල්ලෙහා Dropdown එකෙන් Project එක තෝරන්න.</p>
+                            <h3 class="text-sm font-bold text-cyan-400 flex items-center gap-2"><i class="fas fa-sitemap"></i> Custom Project-Specific Share & Company Retention Allocator</h3>
+                            <p class="text-xs text-slate-400">එක් එක් Project එකට අදාළව Shareholders ලාගේ Share % එක සහ Company Reserve Balance එක වෙන වෙනම නිරීක්ෂණයට හා Edit කිරීමට පල්ලෙහා Dropdown එක භාවිතා කරන්න.</p>
                         </div>
                         <select id="shareProjectSelect" onchange="renderCustomProjectShares()" class="rounded-xl p-2.5 text-xs neo-input w-full sm:w-64 font-bold text-amber-400"></select>
                     </div>
@@ -613,8 +619,8 @@
         const SCOPES = "https://www.googleapis.com/auth/drive.appdata";
 
         let tokenClient;
-        let gAccessToken = localStorage.getItem('g_drive_token_ebs_v3') || null;
-        let driveFileId = localStorage.getItem('g_drive_file_id_ebs_v3') || null;
+        let gAccessToken = localStorage.getItem('g_drive_token_ebs_v4') || null;
+        let driveFileId = localStorage.getItem('g_drive_file_id_ebs_v4') || null;
 
         function initGoogleDriveAuth() {
             if (typeof google === 'undefined' || !google.accounts) return;
@@ -625,7 +631,7 @@
                 callback: async (response) => {
                     if (response.access_token) {
                         gAccessToken = response.access_token;
-                        localStorage.setItem('g_drive_token_ebs_v3', gAccessToken);
+                        localStorage.setItem('g_drive_token_ebs_v4', gAccessToken);
                         updateSyncBadge('sync-success', '<i class="fa-solid fa-cloud-check"></i> Google Drive Synced');
                         await fetchOrInitDriveData();
                     }
@@ -648,20 +654,20 @@
         async function fetchOrInitDriveData() {
             if (!gAccessToken) return;
             try {
-                let res = await fetch("https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name='ebs_erp_v3_backup.json'", {
+                let res = await fetch("https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name='ebs_erp_v4_backup.json'", {
                     headers: { 'Authorization': `Bearer ${gAccessToken}` }
                 });
                 let data = await res.json();
                 if (data.files && data.files.length > 0) {
                     driveFileId = data.files[0].id;
-                    localStorage.setItem('g_drive_file_id_ebs_v3', driveFileId);
+                    localStorage.setItem('g_drive_file_id_ebs_v4', driveFileId);
                     await downloadDriveData(driveFileId);
                 } else { await createDriveFile(); }
             } catch (err) { console.log("Drive Fetch Error:", err); }
         }
 
         async function createDriveFile() {
-            const fileMetadata = { name: 'ebs_erp_v3_backup.json', parents: ['appDataFolder'] };
+            const fileMetadata = { name: 'ebs_erp_v4_backup.json', parents: ['appDataFolder'] };
             const payload = { shareholders: shareholders, projects: projects, expenses: projectExpenses, overheads: officeOverheads, projectConfig: projectConfig };
 
             const form = new FormData();
@@ -676,7 +682,7 @@
             let file = await res.json();
             if (file.id) {
                 driveFileId = file.id;
-                localStorage.setItem('g_drive_file_id_ebs_v3', driveFileId);
+                localStorage.setItem('g_drive_file_id_ebs_v4', driveFileId);
             }
         }
 
@@ -722,7 +728,7 @@
     <!-- 4. CORE UPGRADED EBS ERP LOGIC -->
     <script>
         const DEFAULT_PIN = "1234";
-        let userPIN = localStorage.getItem('ebsErpPIN_v3') || DEFAULT_PIN;
+        let userPIN = localStorage.getItem('ebsErpPIN_v4') || DEFAULT_PIN;
 
         const loginScreen = document.getElementById('login-screen');
         const appScreen = document.getElementById('app-screen');
@@ -730,12 +736,12 @@
         const pinInput = document.getElementById('pin-input');
         const loginError = document.getElementById('login-error');
 
-        if (sessionStorage.getItem('isEbsLoggedIn_v3') === 'true') { showApp(); }
+        if (sessionStorage.getItem('isEbsLoggedIn_v4') === 'true') { showApp(); }
 
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             if (pinInput.value === userPIN) {
-                sessionStorage.setItem('isEbsLoggedIn_v3', 'true');
+                sessionStorage.setItem('isEbsLoggedIn_v4', 'true');
                 loginError.classList.add('hidden');
                 showApp();
             } else {
@@ -750,7 +756,7 @@
             renderAll();
         }
 
-        function logout() { sessionStorage.removeItem('isEbsLoggedIn_v3'); location.reload(); }
+        function logout() { sessionStorage.removeItem('isEbsLoggedIn_v4'); location.reload(); }
 
         function changePIN() {
             const current = prompt("Enter Current PIN:");
@@ -758,7 +764,7 @@
                 const newPIN = prompt("Enter NEW PIN (Min 4 digits):");
                 if (newPIN && newPIN.trim().length >= 4) {
                     userPIN = newPIN.trim();
-                    localStorage.setItem('ebsErpPIN_v3', userPIN);
+                    localStorage.setItem('ebsErpPIN_v4', userPIN);
                     alert("PIN Changed Successfully!");
                 } else { alert("PIN must be at least 4 digits!"); }
             } else if (current !== null) { alert("Current PIN Incorrect!"); }
@@ -782,21 +788,21 @@
             { name: "Shareholder 7", capital: 0, defaultPct: 14.32 }
         ];
 
-        let shareholders = JSON.parse(localStorage.getItem('ebsShareholdersV3')) || defaultShareholders;
-        let projects = JSON.parse(localStorage.getItem('ebsProjectsV3')) || [];
-        let projectExpenses = JSON.parse(localStorage.getItem('ebsExpensesV3')) || [];
-        let officeOverheads = JSON.parse(localStorage.getItem('ebsOverheadsV3')) || [];
-        let projectConfig = JSON.parse(localStorage.getItem('ebsProjectConfigV3')) || {}; // Store custom retention & custom shares per project
+        let shareholders = JSON.parse(localStorage.getItem('ebsShareholdersV4')) || defaultShareholders;
+        let projects = JSON.parse(localStorage.getItem('ebsProjectsV4')) || [];
+        let projectExpenses = JSON.parse(localStorage.getItem('ebsExpensesV4')) || [];
+        let officeOverheads = JSON.parse(localStorage.getItem('ebsOverheadsV4')) || [];
+        let projectConfig = JSON.parse(localStorage.getItem('ebsProjectConfigV4')) || {}; 
 
         let growthChart = null;
         const formatMoney = (num) => Number(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
         function saveLocal() {
-            localStorage.setItem('ebsShareholdersV3', JSON.stringify(shareholders));
-            localStorage.setItem('ebsProjectsV3', JSON.stringify(projects));
-            localStorage.setItem('ebsExpensesV3', JSON.stringify(projectExpenses));
-            localStorage.setItem('ebsOverheadsV3', JSON.stringify(officeOverheads));
-            localStorage.setItem('ebsProjectConfigV3', JSON.stringify(projectConfig));
+            localStorage.setItem('ebsShareholdersV4', JSON.stringify(shareholders));
+            localStorage.setItem('ebsProjectsV4', JSON.stringify(projects));
+            localStorage.setItem('ebsExpensesV4', JSON.stringify(projectExpenses));
+            localStorage.setItem('ebsOverheadsV4', JSON.stringify(officeOverheads));
+            localStorage.setItem('ebsProjectConfigV4', JSON.stringify(projectConfig));
         }
 
         function saveAndSync() { saveLocal(); syncToDrive(); }
@@ -834,7 +840,6 @@
             if (editIdx >= 0) { projects[editIdx] = projObj; } 
             else { 
                 projects.push(projObj); 
-                // Initialize default project config
                 projectConfig[projObj.title] = { retentionPct: 10, shares: {} };
                 shareholders.forEach(s => { projectConfig[projObj.title].shares[s.name] = s.defaultPct; });
             }
@@ -903,10 +908,22 @@
             let totalAllExpenses = totalSiteExpenses + totalOfficeOverheads;
             let netCompanyProfit = totalProjectIncome - totalAllExpenses;
 
+            // Calculate Total Retention Reserve across all projects
+            let totalRetentionReserve = 0;
+            projects.forEach(p => {
+                let pExpenses = projectExpenses.filter(e => e.project === p.title).reduce((acc, curr) => acc + curr.paid + curr.pending, 0);
+                let pProfit = p.value - pExpenses;
+                let rPct = (projectConfig[p.title] && projectConfig[p.title].retentionPct !== undefined) ? projectConfig[p.title].retentionPct : 10;
+                if (pProfit > 0) {
+                    totalRetentionReserve += (pProfit * (rPct / 100));
+                }
+            });
+
             // Update Dashboard Overview Widgets
             document.getElementById('dash-capital').innerText = formatMoney(totalCapital);
             document.getElementById('dash-income').innerText = formatMoney(totalProjectIncome);
             document.getElementById('dash-expenses').innerText = formatMoney(totalAllExpenses);
+            document.getElementById('dash-total-retention-reserve').innerText = formatMoney(totalRetentionReserve);
             document.getElementById('dash-net-profit').innerText = formatMoney(netCompanyProfit);
             document.getElementById('overhead-total-label').innerText = formatMoney(totalOfficeOverheads);
 
@@ -963,6 +980,8 @@
 
                 let pExpenses = projectExpenses.filter(e => e.project === p.title).reduce((acc, curr) => acc + curr.paid + curr.pending, 0);
                 let pProfit = p.value - pExpenses;
+                let rPct = (projectConfig[p.title] && projectConfig[p.title].retentionPct !== undefined) ? projectConfig[p.title].retentionPct : 10;
+                let pRetentionMoney = pProfit > 0 ? (pProfit * (rPct / 100)) : 0;
 
                 let bondStatusHtml = `<span class="text-slate-500 font-bold">No Bond Required</span>`;
                 if (!p.noBond && p.bondExpiry) {
@@ -984,6 +1003,7 @@
                     <td class="p-3 text-right font-mono text-cyan-400">Rs. ${formatMoney(p.value)}</td>
                     <td class="p-3 text-right font-mono text-rose-400">Rs. ${formatMoney(pExpenses)}</td>
                     <td class="p-3 text-right font-mono text-emerald-400 font-bold">Rs. ${formatMoney(pProfit)}</td>
+                    <td class="p-3 text-right font-mono text-purple-400 font-bold">Rs. ${formatMoney(pRetentionMoney)} <span class="text-[9px] text-slate-500">(${rPct}%)</span></td>
                     <td class="p-3 text-center">${bondStatusHtml}</td>
                 `;
                 dBody.appendChild(tr);
@@ -1030,6 +1050,9 @@
             let pExpenses = projectExpenses.filter(e => e.project === selectedProjTitle).reduce((acc, curr) => acc + curr.paid + curr.pending, 0);
             let pProfit = (pObj ? pObj.value : 0) - pExpenses;
 
+            let compReserveMoney = pProfit > 0 ? pProfit * (pCfg.retentionPct / 100) : 0;
+            let distributableProfit = pProfit - compReserveMoney;
+
             let html = `
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800 pb-3">
                     <div>
@@ -1037,17 +1060,14 @@
                         <p class="text-[11px] text-slate-400">Total Project Profit: <span class="font-mono text-emerald-400 font-bold">Rs. ${formatMoney(pProfit)}</span></p>
                     </div>
                     <div class="flex items-center gap-2">
-                        <span class="text-xs text-amber-400 font-bold">Company Retention %:</span>
-                        <input type="number" id="curProjRetentionInput" value="${pCfg.retentionPct}" min="0" max="100" class="w-20 rounded-xl p-1.5 text-xs font-mono neo-input text-center">
-                        <button onclick="saveCustomProjRetention('${selectedProjTitle}')" class="bg-amber-500 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs">Save Reserve %</button>
+                        <span class="text-xs text-purple-300 font-bold">Company Reserve (${pCfg.retentionPct}%): <strong class="font-mono text-purple-400">Rs. ${formatMoney(compReserveMoney)}</strong></span>
+                        <input type="number" id="curProjRetentionInput" value="${pCfg.retentionPct}" min="0" max="100" class="w-16 rounded-xl p-1.5 text-xs font-mono neo-input text-center">
+                        <button onclick="saveCustomProjRetention('${selectedProjTitle}')" class="bg-purple-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs">Set %</button>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
             `;
-
-            let compReserveMoney = pProfit > 0 ? pProfit * (pCfg.retentionPct / 100) : 0;
-            let distributableProfit = pProfit - compReserveMoney;
 
             shareholders.forEach(s => {
                 let currentPct = pCfg.shares[s.name] !== undefined ? pCfg.shares[s.name] : s.defaultPct;
