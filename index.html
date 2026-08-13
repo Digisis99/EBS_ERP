@@ -116,7 +116,7 @@
             </div>
             <div>
                 <h2 class="text-xl font-black text-white tracking-tight">EXPERT BUILD SOLUTION</h2>
-                <p class="text-xs text-amber-400 font-bold mt-1"> Professional Enterprise ERP OS </p>
+                <p class="text-xs text-amber-400 font-bold mt-1">(Pvt) Ltd - Enterprise ERP OS Pro</p>
             </div>
 
             <form id="login-form" class="space-y-4">
@@ -197,9 +197,9 @@
                     <p class="text-[10px] text-slate-500 mt-1">Projects මුළු ආදායම</p>
                 </div>
                 <div class="erp-card p-4 border-l-4 border-l-rose-400">
-                    <span class="text-[11px] font-bold uppercase text-slate-400 tracking-wider">Total Expenses</span>
+                    <span class="text-[11px] font-bold uppercase text-slate-400 tracking-wider">Total Expenses Paid</span>
                     <div class="text-xl font-black text-rose-400 font-mono mt-1">Rs. <span id="dash-expenses">0.00</span></div>
-                    <p class="text-[10px] text-slate-500 mt-1">Site + Overhead වියදම</p>
+                    <p class="text-[10px] text-slate-500 mt-1">Site + Overhead ගෙවූ වියදම</p>
                 </div>
                 <div class="erp-card p-4 border-l-4 border-l-purple-400 bg-purple-500/5">
                     <span class="text-[11px] font-bold uppercase text-purple-300 tracking-wider">Total Retention Reserve</span>
@@ -430,7 +430,7 @@
             </div>
         </div>
 
-        <!-- TAB 5: OFFICE OVERHEAD EXPENSES -->
+        <!-- TAB 5: OFFICE OVERHEAD EXPENSES & AUTO BALANCE -->
         <div id="tab-overhead" class="tab-content hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <!-- Overhead Form -->
@@ -454,15 +454,23 @@
                             <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Description / Voucher Note</label>
                             <input type="text" id="ohDesc" placeholder="e.g. Head Office Electricity Bill - August" class="w-full rounded-xl p-2.5 text-xs neo-input" required>
                         </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Date</label>
+                            <input type="date" id="ohDate" class="w-full rounded-xl p-2.5 text-xs neo-input" required>
+                        </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Date</label>
-                                <input type="date" id="ohDate" class="w-full rounded-xl p-2.5 text-xs neo-input" required>
+                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Total Bill / Est (Rs)</label>
+                                <input type="number" id="ohEst" min="0" step="any" oninput="autoCalcOverheadBalance()" placeholder="0.00" class="w-full rounded-xl p-2.5 text-xs font-mono neo-input" required>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Amount (Rs)</label>
-                                <input type="number" id="ohAmount" min="0" step="any" placeholder="0.00" class="w-full rounded-xl p-2.5 text-xs font-mono neo-input" required>
+                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Paid Amount (Rs)</label>
+                                <input type="number" id="ohPaid" min="0" step="any" oninput="autoCalcOverheadBalance()" placeholder="0.00" class="w-full rounded-xl p-2.5 text-xs font-mono neo-input" required>
                             </div>
+                        </div>
+                        <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex justify-between items-center">
+                            <span class="text-xs text-slate-400 font-bold">Auto Calculated Pending Balance:</span>
+                            <span class="text-sm font-black text-rose-400 font-mono">Rs. <span id="ohBalancePreview">0.00</span></span>
                         </div>
                         <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-black py-3 rounded-xl text-xs">
                             <i class="fas fa-save"></i> Save Overhead Expense
@@ -474,15 +482,16 @@
                 <div class="lg:col-span-7 erp-card p-6 space-y-4">
                     <div class="flex justify-between items-center border-b border-slate-700/60 pb-3">
                         <h2 class="text-base font-bold text-white flex items-center gap-2"><i class="fas fa-list-check text-purple-400"></i> Office Overhead Expenses Summary</h2>
-                        <span class="text-xs font-mono text-rose-400 font-bold bg-rose-500/10 px-3 py-1 rounded-lg border border-rose-500/20">Total: Rs. <span id="overhead-total-label">0.00</span></span>
+                        <span class="text-xs font-mono text-rose-400 font-bold bg-rose-500/10 px-3 py-1 rounded-lg border border-rose-500/20">Total Paid: Rs. <span id="overhead-total-label">0.00</span></span>
                     </div>
                     <div class="table-scroll-container">
                         <table class="w-full text-left border-collapse min-w-[550px]">
                             <thead>
                                 <tr class="bg-slate-900 text-slate-400 text-xs uppercase font-bold border-b border-slate-700">
                                     <th class="p-3">Category & Note</th>
-                                    <th class="p-3 text-center">Date</th>
-                                    <th class="p-3 text-right">Amount (Rs)</th>
+                                    <th class="p-3 text-right">Total Est</th>
+                                    <th class="p-3 text-right">Paid</th>
+                                    <th class="p-3 text-right">Balance Due</th>
                                     <th class="p-3 text-center no-print">Actions</th>
                                 </tr>
                             </thead>
@@ -499,23 +508,27 @@
                 <div class="border-b border-slate-700/60 pb-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
                         <h2 class="text-base font-bold text-white flex items-center gap-2"><i class="fas fa-calendar-check text-amber-400"></i> Upcoming Financial Obligations & Pending Balances</h2>
-                        <p class="text-xs text-slate-400">ඉදිරියට ගෙවීමට ඇති සියලුම Supplier/Contractor Balances එකම තැනකින් Monitor කිරීමට මෙතැනින් හැක.</p>
+                        <p class="text-xs text-slate-400">ඉදිරියට ගෙවීමට ඇති සියලුම Supplier/Contractor Balances සහ Office Overhead Balances එකම තැනකින් Monitor කිරීමට මෙතැනින් හැක.</p>
                     </div>
                     <button onclick="window.print()" class="bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold px-3.5 py-2 rounded-xl text-xs"><i class="fas fa-file-pdf"></i> Print Upcoming Summary Report</button>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
                     <div class="p-4 bg-slate-900 rounded-xl border border-slate-800">
-                        <span class="text-xs text-slate-400 uppercase font-bold">Total Pending Supplier Payables</span>
-                        <div class="text-xl font-mono text-rose-400 font-bold mt-1">Rs. <span id="upcoming-total-payables">0.00</span></div>
+                        <span class="text-[11px] text-slate-400 uppercase font-bold">Site Payables</span>
+                        <div class="text-lg font-mono text-rose-400 font-bold mt-1">Rs. <span id="upcoming-total-site-payables">0.00</span></div>
                     </div>
                     <div class="p-4 bg-slate-900 rounded-xl border border-slate-800">
-                        <span class="text-xs text-slate-400 uppercase font-bold">Pending Projects Count</span>
-                        <div class="text-xl font-mono text-cyan-400 font-bold mt-1"><span id="upcoming-project-count">0</span> Projects</div>
+                        <span class="text-[11px] text-slate-400 uppercase font-bold">Office Overhead Payables</span>
+                        <div class="text-lg font-mono text-purple-400 font-bold mt-1">Rs. <span id="upcoming-total-oh-payables">0.00</span></div>
+                    </div>
+                    <div class="p-4 bg-slate-900 rounded-xl border border-slate-800 bg-rose-500/5">
+                        <span class="text-[11px] text-rose-300 uppercase font-bold">Grand Total Due</span>
+                        <div class="text-lg font-mono text-rose-400 font-bold mt-1">Rs. <span id="upcoming-grand-total">0.00</span></div>
                     </div>
                     <div class="p-4 bg-slate-900 rounded-xl border border-slate-800">
-                        <span class="text-xs text-slate-400 uppercase font-bold">Expiring Bonds Warning</span>
-                        <div class="text-xl font-mono text-amber-400 font-bold mt-1"><span id="upcoming-bond-warning-count">0</span> Bonds</div>
+                        <span class="text-[11px] text-slate-400 uppercase font-bold">Expiring Bonds</span>
+                        <div class="text-lg font-mono text-amber-400 font-bold mt-1"><span id="upcoming-bond-warning-count">0</span> Bonds</div>
                     </div>
                 </div>
 
@@ -523,8 +536,8 @@
                     <table class="w-full text-left border-collapse min-w-[650px]">
                         <thead>
                             <tr class="bg-slate-900 text-slate-400 text-xs uppercase font-bold border-b border-slate-700">
-                                <th class="p-3">Project Title</th>
-                                <th class="p-3">Payee / Supplier Name</th>
+                                <th class="p-3">Category / Scope</th>
+                                <th class="p-3">Payee / Description</th>
                                 <th class="p-3 text-right">Original Estimate</th>
                                 <th class="p-3 text-right">Already Paid</th>
                                 <th class="p-3 text-right">Required Balance Due</th>
@@ -615,12 +628,12 @@
 
     <!-- 3. GOOGLE DRIVE APPDATA AUTO-SYNC ENGINE -->
     <script>
-        const GOOGLE_CLIENT_ID = "121225169916-0ep54f7ls5ht5u972p7b2qdfttjug54r.apps.googleusercontent.com"; 
-        const SCOPES = "https://www.googleapis.com/auth/drive.appdata";
+        const GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"; 
+        const SCOPES = "121225169916-0ep54f7ls5ht5u972p7b2qdfttjug54r.apps.googleusercontent.com";
 
         let tokenClient;
-        let gAccessToken = localStorage.getItem('g_drive_token_ebs_v4') || null;
-        let driveFileId = localStorage.getItem('g_drive_file_id_ebs_v4') || null;
+        let gAccessToken = localStorage.getItem('g_drive_token_ebs_v5') || null;
+        let driveFileId = localStorage.getItem('g_drive_file_id_ebs_v5') || null;
 
         function initGoogleDriveAuth() {
             if (typeof google === 'undefined' || !google.accounts) return;
@@ -631,7 +644,7 @@
                 callback: async (response) => {
                     if (response.access_token) {
                         gAccessToken = response.access_token;
-                        localStorage.setItem('g_drive_token_ebs_v4', gAccessToken);
+                        localStorage.setItem('g_drive_token_ebs_v5', gAccessToken);
                         updateSyncBadge('sync-success', '<i class="fa-solid fa-cloud-check"></i> Google Drive Synced');
                         await fetchOrInitDriveData();
                     }
@@ -654,20 +667,20 @@
         async function fetchOrInitDriveData() {
             if (!gAccessToken) return;
             try {
-                let res = await fetch("https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name='ebs_erp_v4_backup.json'", {
+                let res = await fetch("https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name='ebs_erp_v5_backup.json'", {
                     headers: { 'Authorization': `Bearer ${gAccessToken}` }
                 });
                 let data = await res.json();
                 if (data.files && data.files.length > 0) {
                     driveFileId = data.files[0].id;
-                    localStorage.setItem('g_drive_file_id_ebs_v4', driveFileId);
+                    localStorage.setItem('g_drive_file_id_ebs_v5', driveFileId);
                     await downloadDriveData(driveFileId);
                 } else { await createDriveFile(); }
             } catch (err) { console.log("Drive Fetch Error:", err); }
         }
 
         async function createDriveFile() {
-            const fileMetadata = { name: 'ebs_erp_v4_backup.json', parents: ['appDataFolder'] };
+            const fileMetadata = { name: 'ebs_erp_v5_backup.json', parents: ['appDataFolder'] };
             const payload = { shareholders: shareholders, projects: projects, expenses: projectExpenses, overheads: officeOverheads, projectConfig: projectConfig };
 
             const form = new FormData();
@@ -682,7 +695,7 @@
             let file = await res.json();
             if (file.id) {
                 driveFileId = file.id;
-                localStorage.setItem('g_drive_file_id_ebs_v4', driveFileId);
+                localStorage.setItem('g_drive_file_id_ebs_v5', driveFileId);
             }
         }
 
@@ -728,7 +741,7 @@
     <!-- 4. CORE UPGRADED EBS ERP LOGIC -->
     <script>
         const DEFAULT_PIN = "1234";
-        let userPIN = localStorage.getItem('ebsErpPIN_v4') || DEFAULT_PIN;
+        let userPIN = localStorage.getItem('ebsErpPIN_v5') || DEFAULT_PIN;
 
         const loginScreen = document.getElementById('login-screen');
         const appScreen = document.getElementById('app-screen');
@@ -736,12 +749,12 @@
         const pinInput = document.getElementById('pin-input');
         const loginError = document.getElementById('login-error');
 
-        if (sessionStorage.getItem('isEbsLoggedIn_v4') === 'true') { showApp(); }
+        if (sessionStorage.getItem('isEbsLoggedIn_v5') === 'true') { showApp(); }
 
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             if (pinInput.value === userPIN) {
-                sessionStorage.setItem('isEbsLoggedIn_v4', 'true');
+                sessionStorage.setItem('isEbsLoggedIn_v5', 'true');
                 loginError.classList.add('hidden');
                 showApp();
             } else {
@@ -756,7 +769,7 @@
             renderAll();
         }
 
-        function logout() { sessionStorage.removeItem('isEbsLoggedIn_v4'); location.reload(); }
+        function logout() { sessionStorage.removeItem('isEbsLoggedIn_v5'); location.reload(); }
 
         function changePIN() {
             const current = prompt("Enter Current PIN:");
@@ -764,7 +777,7 @@
                 const newPIN = prompt("Enter NEW PIN (Min 4 digits):");
                 if (newPIN && newPIN.trim().length >= 4) {
                     userPIN = newPIN.trim();
-                    localStorage.setItem('ebsErpPIN_v4', userPIN);
+                    localStorage.setItem('ebsErpPIN_v5', userPIN);
                     alert("PIN Changed Successfully!");
                 } else { alert("PIN must be at least 4 digits!"); }
             } else if (current !== null) { alert("Current PIN Incorrect!"); }
@@ -788,21 +801,21 @@
             { name: "Shareholder 7", capital: 0, defaultPct: 14.32 }
         ];
 
-        let shareholders = JSON.parse(localStorage.getItem('ebsShareholdersV4')) || defaultShareholders;
-        let projects = JSON.parse(localStorage.getItem('ebsProjectsV4')) || [];
-        let projectExpenses = JSON.parse(localStorage.getItem('ebsExpensesV4')) || [];
-        let officeOverheads = JSON.parse(localStorage.getItem('ebsOverheadsV4')) || [];
-        let projectConfig = JSON.parse(localStorage.getItem('ebsProjectConfigV4')) || {}; 
+        let shareholders = JSON.parse(localStorage.getItem('ebsShareholdersV5')) || defaultShareholders;
+        let projects = JSON.parse(localStorage.getItem('ebsProjectsV5')) || [];
+        let projectExpenses = JSON.parse(localStorage.getItem('ebsExpensesV5')) || [];
+        let officeOverheads = JSON.parse(localStorage.getItem('ebsOverheadsV5')) || [];
+        let projectConfig = JSON.parse(localStorage.getItem('ebsProjectConfigV5')) || {}; 
 
         let growthChart = null;
         const formatMoney = (num) => Number(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
         function saveLocal() {
-            localStorage.setItem('ebsShareholdersV4', JSON.stringify(shareholders));
-            localStorage.setItem('ebsProjectsV4', JSON.stringify(projects));
-            localStorage.setItem('ebsExpensesV4', JSON.stringify(projectExpenses));
-            localStorage.setItem('ebsOverheadsV4', JSON.stringify(officeOverheads));
-            localStorage.setItem('ebsProjectConfigV4', JSON.stringify(projectConfig));
+            localStorage.setItem('ebsShareholdersV5', JSON.stringify(shareholders));
+            localStorage.setItem('ebsProjectsV5', JSON.stringify(projects));
+            localStorage.setItem('ebsExpensesV5', JSON.stringify(projectExpenses));
+            localStorage.setItem('ebsOverheadsV5', JSON.stringify(officeOverheads));
+            localStorage.setItem('ebsProjectConfigV5', JSON.stringify(projectConfig));
         }
 
         function saveAndSync() { saveLocal(); syncToDrive(); }
@@ -817,6 +830,13 @@
             const paid = parseFloat(document.getElementById('expPaid').value) || 0;
             const bal = est - paid;
             document.getElementById('expBalancePreview').innerText = formatMoney(bal >= 0 ? bal : 0);
+        }
+
+        function autoCalcOverheadBalance() {
+            const est = parseFloat(document.getElementById('ohEst').value) || 0;
+            const paid = parseFloat(document.getElementById('ohPaid').value) || 0;
+            const bal = est - paid;
+            document.getElementById('ohBalancePreview').innerText = formatMoney(bal >= 0 ? bal : 0);
         }
 
         // Add / Edit Project
@@ -881,12 +901,17 @@
         document.getElementById('overhead-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const editIdx = parseInt(document.getElementById('editOverheadIndex').value);
+            const est = parseFloat(document.getElementById('ohEst').value) || 0;
+            const paid = parseFloat(document.getElementById('ohPaid').value) || 0;
+            const pending = est - paid;
 
             const ohObj = {
                 category: document.getElementById('ohCategory').value,
                 desc: document.getElementById('ohDesc').value,
                 date: document.getElementById('ohDate').value,
-                amount: parseFloat(document.getElementById('ohAmount').value) || 0
+                est: est,
+                paid: paid,
+                pending: pending >= 0 ? pending : 0
             };
 
             if (editIdx >= 0) { officeOverheads[editIdx] = ohObj; } 
@@ -894,6 +919,7 @@
 
             this.reset();
             document.getElementById('editOverheadIndex').value = -1;
+            document.getElementById('ohBalancePreview').innerText = '0.00';
             saveAndSync();
             renderAll();
         });
@@ -901,12 +927,11 @@
         function renderAll() {
             let totalCapital = shareholders.reduce((acc, curr) => acc + curr.capital, 0);
             let totalProjectIncome = projects.reduce((acc, curr) => acc + curr.value, 0);
-            let totalSiteExpenses = projectExpenses.reduce((acc, curr) => acc + curr.paid, 0);
-            let totalPendingPayables = projectExpenses.reduce((acc, curr) => acc + curr.pending, 0);
-            let totalOfficeOverheads = officeOverheads.reduce((acc, curr) => acc + curr.amount, 0);
+            let totalSiteExpensesPaid = projectExpenses.reduce((acc, curr) => acc + curr.paid, 0);
+            let totalOfficeOverheadsPaid = officeOverheads.reduce((acc, curr) => acc + (curr.paid !== undefined ? curr.paid : curr.amount || 0), 0);
 
-            let totalAllExpenses = totalSiteExpenses + totalOfficeOverheads;
-            let netCompanyProfit = totalProjectIncome - totalAllExpenses;
+            let totalAllExpensesPaid = totalSiteExpensesPaid + totalOfficeOverheadsPaid;
+            let netCompanyProfit = totalProjectIncome - totalAllExpensesPaid;
 
             // Calculate Total Retention Reserve across all projects
             let totalRetentionReserve = 0;
@@ -922,10 +947,10 @@
             // Update Dashboard Overview Widgets
             document.getElementById('dash-capital').innerText = formatMoney(totalCapital);
             document.getElementById('dash-income').innerText = formatMoney(totalProjectIncome);
-            document.getElementById('dash-expenses').innerText = formatMoney(totalAllExpenses);
+            document.getElementById('dash-expenses').innerText = formatMoney(totalAllExpensesPaid);
             document.getElementById('dash-total-retention-reserve').innerText = formatMoney(totalRetentionReserve);
             document.getElementById('dash-net-profit').innerText = formatMoney(netCompanyProfit);
-            document.getElementById('overhead-total-label').innerText = formatMoney(totalOfficeOverheads);
+            document.getElementById('overhead-total-label').innerText = formatMoney(totalOfficeOverheadsPaid);
 
             // Populate Filter Dropdowns
             populateDropdowns();
@@ -939,7 +964,7 @@
             renderOverheadsTable();
             renderUpcomingTable();
 
-            renderGrowthChart(totalProjectIncome, totalSiteExpenses, totalOfficeOverheads, netCompanyProfit);
+            renderGrowthChart(totalProjectIncome, totalSiteExpensesPaid, totalOfficeOverheadsPaid, netCompanyProfit);
         }
 
         function populateDropdowns() {
@@ -1172,12 +1197,17 @@
             ohBody.innerHTML = '';
 
             officeOverheads.forEach((o, idx) => {
+                let estVal = o.est !== undefined ? o.est : o.amount || 0;
+                let paidVal = o.paid !== undefined ? o.paid : o.amount || 0;
+                let pendingVal = o.pending !== undefined ? o.pending : 0;
+
                 let tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-800/40 transition";
                 tr.innerHTML = `
-                    <td class="p-3"><span class="font-bold text-white">${o.desc}</span><br><span class="text-[10px] text-purple-400 font-semibold">${o.category}</span></td>
-                    <td class="p-3 text-center font-mono text-slate-400">${o.date}</td>
-                    <td class="p-3 text-right font-mono text-rose-400 font-bold">Rs. ${formatMoney(o.amount)}</td>
+                    <td class="p-3"><span class="font-bold text-white">${o.desc}</span><br><span class="text-[10px] text-purple-400 font-semibold">${o.category} (${o.date})</span></td>
+                    <td class="p-3 text-right font-mono text-slate-400">Rs. ${formatMoney(estVal)}</td>
+                    <td class="p-3 text-right font-mono text-emerald-400 font-bold">Rs. ${formatMoney(paidVal)}</td>
+                    <td class="p-3 text-right font-mono text-rose-400 font-bold">Rs. ${formatMoney(pendingVal)}</td>
                     <td class="p-3 text-center no-print">
                         <button onclick="editOverhead(${idx})" class="text-xs bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 px-2 py-1 rounded-lg font-bold"><i class="fas fa-edit"></i> Edit</button>
                         <button onclick="deleteOverhead(${idx})" class="text-xs text-rose-400 hover:text-rose-300 ml-1"><i class="fas fa-trash-alt"></i></button>
@@ -1190,15 +1220,17 @@
         function renderUpcomingTable() {
             const uBody = document.getElementById('upcoming-table-body');
             uBody.innerHTML = '';
-            let totalPayables = 0;
+            let totalSitePayables = 0;
+            let totalOhPayables = 0;
 
+            // Site Payables
             projectExpenses.forEach(e => {
                 if (e.pending > 0) {
-                    totalPayables += e.pending;
+                    totalSitePayables += e.pending;
                     let tr = document.createElement('tr');
                     tr.className = "hover:bg-slate-800/40 transition";
                     tr.innerHTML = `
-                        <td class="p-3 font-bold text-cyan-400">${e.project}</td>
+                        <td class="p-3 font-bold text-cyan-400">Site: ${e.project}</td>
                         <td class="p-3 font-bold text-white">${e.name}</td>
                         <td class="p-3 text-right font-mono text-slate-400">Rs. ${formatMoney(e.est)}</td>
                         <td class="p-3 text-right font-mono text-emerald-400">Rs. ${formatMoney(e.paid)}</td>
@@ -1208,8 +1240,30 @@
                 }
             });
 
-            document.getElementById('upcoming-total-payables').innerText = formatMoney(totalPayables);
-            document.getElementById('upcoming-project-count').innerText = projects.length;
+            // Office Overhead Payables
+            officeOverheads.forEach(o => {
+                let estVal = o.est !== undefined ? o.est : o.amount || 0;
+                let paidVal = o.paid !== undefined ? o.paid : o.amount || 0;
+                let pendingVal = o.pending !== undefined ? o.pending : 0;
+
+                if (pendingVal > 0) {
+                    totalOhPayables += pendingVal;
+                    let tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-800/40 transition";
+                    tr.innerHTML = `
+                        <td class="p-3 font-bold text-purple-400">Office Overhead</td>
+                        <td class="p-3 font-bold text-white">${o.desc} (${o.category})</td>
+                        <td class="p-3 text-right font-mono text-slate-400">Rs. ${formatMoney(estVal)}</td>
+                        <td class="p-3 text-right font-mono text-emerald-400">Rs. ${formatMoney(paidVal)}</td>
+                        <td class="p-3 text-right font-mono text-rose-400 font-bold">Rs. ${formatMoney(pendingVal)}</td>
+                    `;
+                    uBody.appendChild(tr);
+                }
+            });
+
+            document.getElementById('upcoming-total-site-payables').innerText = formatMoney(totalSitePayables);
+            document.getElementById('upcoming-total-oh-payables').innerText = formatMoney(totalOhPayables);
+            document.getElementById('upcoming-grand-total').innerText = formatMoney(totalSitePayables + totalOhPayables);
             
             const today = new Date();
             let warningBonds = projects.filter(p => !p.noBond && p.bondExpiry && (Math.ceil((new Date(p.bondExpiry) - today)/(1000*60*60*24)) <= 30)).length;
@@ -1289,7 +1343,7 @@
             growthChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['Projects Gross Income', 'Site Expenses', 'Office Overheads', 'Net Company Profit'],
+                    labels: ['Projects Gross Income', 'Site Expenses Paid', 'Office Overheads Paid', 'Net Company Profit'],
                     datasets: [{
                         label: 'Financial Performance (Rs)',
                         data: [income, siteExp, overheads, netProfit],
@@ -1338,7 +1392,9 @@
             document.getElementById('ohCategory').value = o.category;
             document.getElementById('ohDesc').value = o.desc;
             document.getElementById('ohDate').value = o.date;
-            document.getElementById('ohAmount').value = o.amount;
+            document.getElementById('ohEst').value = o.est !== undefined ? o.est : o.amount || 0;
+            document.getElementById('ohPaid').value = o.paid !== undefined ? o.paid : o.amount || 0;
+            autoCalcOverheadBalance();
             document.getElementById('overhead-form-title').innerHTML = `<i class="fas fa-edit text-amber-400"></i> Edit Office Overhead Entry`;
         }
 
