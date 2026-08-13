@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>Expert Build Solution (Pvt) Ltd - Advanced ERP OS Pro</title>
+    <title>Expert Build Solution (Pvt) Ltd - Ultimate ERP OS Pro</title>
     
     <!-- Google Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,8 +38,6 @@
             color: #f8fafc;
             min-height: 100vh;
             -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
             user-select: none;
         }
 
@@ -64,15 +62,15 @@
         }
 
         .tab-btn {
-            padding: 10px 18px;
-            font-size: 0.82rem;
+            padding: 9px 15px;
+            font-size: 0.78rem;
             font-weight: 700;
             border-radius: 12px;
             transition: all 0.3s ease;
             color: #94a3b8;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         .tab-btn.active {
             background: linear-gradient(135deg, var(--brand-gold), #d97706);
@@ -80,8 +78,18 @@
             box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
         }
 
-        .table-scroll-container { max-height: 480px; overflow-y: auto; }
+        /* Fixed Height & Scrollbar for Tables */
+        .table-scroll-container { 
+            max-height: 320px; 
+            overflow-y: auto; 
+            border-radius: 12px;
+        }
         .table-scroll-container th { position: sticky; top: 0; z-index: 20; background-color: #0f172a; }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--brand-gold); }
 
         #syncBadge { font-size: 0.72rem; padding: 4px 10px; border-radius: 8px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px; }
         .sync-success { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4); }
@@ -166,14 +174,16 @@
         </header>
 
         <!-- NAVIGATION TABS -->
-        <div class="flex flex-wrap gap-2 erp-card p-2 no-print">
-            <button class="tab-btn active" onclick="switchTab('tab-dashboard', this)"><i class="fas fa-chart-line"></i> Executive Dashboard</button>
-            <button class="tab-btn" onclick="switchTab('tab-shareholders', this)"><i class="fas fa-users font-bold"></i> Shareholders & Shares</button>
+        <div class="flex flex-wrap gap-1.5 erp-card p-2 no-print">
+            <button class="tab-btn active" onclick="switchTab('tab-dashboard', this)"><i class="fas fa-chart-line"></i> Dashboard & Growth</button>
+            <button class="tab-btn" onclick="switchTab('tab-shareholders', this)"><i class="fas fa-users"></i> Shareholders & Custom Shares</button>
             <button class="tab-btn" onclick="switchTab('tab-projects', this)"><i class="fas fa-city"></i> Project Management</button>
-            <button class="tab-btn" onclick="switchTab('tab-contractors', this)"><i class="fas fa-hard-hat"></i> Contractors & Suppliers</button>
+            <button class="tab-btn" onclick="switchTab('tab-contractors', this)"><i class="fas fa-hard-hat"></i> Contractors & Invoices</button>
+            <button class="tab-btn" onclick="switchTab('tab-overhead', this)"><i class="fas fa-building-user"></i> Office Overhead</button>
+            <button class="tab-btn" onclick="switchTab('tab-upcoming', this)"><i class="fas fa-calendar-check"></i> Upcoming Payments</button>
         </div>
 
-        <!-- TAB 1: EXECUTIVE DASHBOARD -->
+        <!-- TAB 1: EXECUTIVE DASHBOARD & GROWTH -->
         <div id="tab-dashboard" class="tab-content space-y-6">
             <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <div class="erp-card p-5 border-l-4 border-l-amber-400">
@@ -182,98 +192,71 @@
                     <p class="text-[11px] text-slate-500 mt-1">හවුල්කරුවන් තැන්පත් කළ මුදල</p>
                 </div>
                 <div class="erp-card p-5 border-l-4 border-l-cyan-400">
-                    <span class="text-xs font-bold uppercase text-slate-400 tracking-wider">Company Profit Reserve</span>
-                    <div class="text-2xl font-black text-cyan-400 font-mono mt-1">Rs. <span id="dash-retention">0.00</span></div>
-                    <p class="text-[11px] text-slate-500 mt-1">Company එකේ රඳවාගත් Profit % එක</p>
+                    <span class="text-xs font-bold uppercase text-slate-400 tracking-wider">Total Projects Income</span>
+                    <div class="text-2xl font-black text-cyan-400 font-mono mt-1">Rs. <span id="dash-income">0.00</span></div>
+                    <p class="text-[11px] text-slate-500 mt-1">සියලුම Projects වලින් ලැබෙන මුළු ආදායම</p>
                 </div>
-                <div class="erp-card p-5 border-l-4 border-l-purple-400">
-                    <span class="text-xs font-bold uppercase text-slate-400 tracking-wider">Supplier Liabilities</span>
-                    <div class="text-2xl font-black text-purple-400 font-mono mt-1">Rs. <span id="dash-payables">0.00</span></div>
-                    <p class="text-[11px] text-slate-500 mt-1">ගෙවීමට ඇති සැපයුම්කරු හිඟ මුදල්</p>
+                <div class="erp-card p-5 border-l-4 border-l-rose-400">
+                    <span class="text-xs font-bold uppercase text-slate-400 tracking-wider">Overhead & Site Expenses</span>
+                    <div class="text-2xl font-black text-rose-400 font-mono mt-1">Rs. <span id="dash-expenses">0.00</span></div>
+                    <p class="text-[11px] text-slate-500 mt-1">Site + Office Overhead මුළු වියදම</p>
                 </div>
                 <div class="erp-card p-5 border-l-4 border-l-emerald-400">
-                    <span class="text-xs font-bold uppercase text-slate-400 tracking-wider">Distributable Dividends</span>
-                    <div class="text-2xl font-black text-emerald-400 font-mono mt-1">Rs. <span id="dash-distributable">0.00</span></div>
-                    <p class="text-[11px] text-slate-500 mt-1">Shareholders අතර බෙදෙන ලාභය</p>
+                    <span class="text-xs font-bold uppercase text-slate-400 tracking-wider">Company Net Profit</span>
+                    <div class="text-2xl font-black text-emerald-400 font-mono mt-1">Rs. <span id="dash-net-profit">0.00</span></div>
+                    <p class="text-[11px] text-slate-500 mt-1">Overheads කැපීමෙන් පසු ශුද්ධ ලාභය</p>
                 </div>
             </div>
 
-            <!-- Project Wise Progress Dashboard -->
+            <!-- Growth Chart -->
+            <div class="erp-card p-6">
+                <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fas fa-chart-column text-amber-400"></i> Company Growth & Financial Performance Chart</h3>
+                <div class="relative h-64 flex items-center justify-center">
+                    <canvas id="growthChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Project Wise Financial & Bond Status Overview -->
             <div class="erp-card p-6 space-y-4">
-                <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fas fa-tasks text-cyan-400"></i> Project-Wise Financial & Bond Status Overview</h3>
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-700/60 pb-3">
+                    <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fas fa-tasks text-cyan-400"></i> Project Financial & Bond Status Monitor</h3>
+                    <select id="dashProjectFilterSelect" onchange="renderDashProjectsTable()" class="rounded-xl p-2 text-xs neo-input w-full sm:w-64 font-bold">
+                        <option value="ALL">Show ALL Projects</option>
+                    </select>
+                </div>
+
                 <div class="table-scroll-container">
                     <table class="w-full text-left border-collapse min-w-[700px]">
                         <thead>
                             <tr class="bg-slate-900 text-slate-400 text-xs uppercase font-bold border-b border-slate-700">
                                 <th class="p-3">Project Title & Source</th>
                                 <th class="p-3 text-right">Contract Value</th>
-                                <th class="p-3 text-right">Actual Expenses</th>
-                                <th class="p-3 text-right">Net Profit</th>
-                                <th class="p-3 text-right">Company Reserve</th>
-                                <th class="p-3 text-center">Bond Status</th>
+                                <th class="p-3 text-right">Site Expenses</th>
+                                <th class="p-3 text-right">Project Profit</th>
+                                <th class="p-3 text-center">Bond Type & Status</th>
                             </tr>
                         </thead>
                         <tbody id="dash-projects-body" class="text-xs divide-y divide-slate-800"></tbody>
                     </table>
                 </div>
             </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <div class="lg:col-span-6 erp-card p-6">
-                    <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2"><i class="fas fa-pie-chart text-amber-400"></i> Shareholders Capital Distribution</h3>
-                    <div class="relative h-64 flex items-center justify-center">
-                        <canvas id="shareChart"></canvas>
-                    </div>
-                </div>
-                <div class="lg:col-span-6 erp-card p-6 space-y-4">
-                    <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fas fa-building-circle-check text-emerald-400"></i> Corporate Summary</h3>
-                    <div class="space-y-3 text-xs">
-                        <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex justify-between">
-                            <span class="text-slate-400">Registered Company:</span>
-                            <span class="text-amber-400 font-bold">Expert Build Solution (Pvt) Ltd</span>
-                        </div>
-                        <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex justify-between">
-                            <span class="text-slate-400">Active Projects:</span>
-                            <span class="text-emerald-400 font-bold"><span id="dash-project-count">0</span> Active Projects</span>
-                        </div>
-                        <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex justify-between">
-                            <span class="text-slate-400">Company Retention Policy:</span>
-                            <span class="text-cyan-400 font-bold"><span id="dash-retention-pct-label">10</span>% Reserve Kept for Company</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
-        <!-- TAB 2: SHAREHOLDERS & CUSTOM SHARES -->
+        <!-- TAB 2: SHAREHOLDERS & CUSTOM PROJECT SHARES -->
         <div id="tab-shareholders" class="tab-content hidden space-y-6">
-            <!-- Company Retention Policy Config -->
-            <div class="erp-card p-5 border-l-4 border-l-cyan-400 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <div>
-                    <h3 class="font-extrabold text-white text-sm">Company Profit Retention Policy (%)</h3>
-                    <p class="text-xs text-slate-400 mt-0.5">සෑම Project එකකම Profit එකෙන් Company එකේ රඳවාගන්නා % එක (ඉතිරිය Shareholder ලා අතර බෙදේ)</p>
-                </div>
-                <div class="flex items-center gap-2 w-full sm:w-auto">
-                    <input type="number" id="companyRetentionInput" min="0" max="100" class="w-24 rounded-xl p-2.5 text-xs font-mono neo-input text-center" placeholder="10">
-                    <span class="text-xs font-bold text-cyan-400">%</span>
-                    <button onclick="saveCompanyRetention()" class="bg-gradient-to-r from-amber-500 to-orange-600 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs">Set Policy</button>
-                </div>
-            </div>
-
             <div class="erp-card p-6 space-y-4">
                 <div class="border-b border-slate-700/60 pb-3 flex justify-between items-center">
-                    <h2 class="text-base font-bold text-white flex items-center gap-2"><i class="fas fa-users text-amber-400"></i> Shareholders & Shares Manager</h2>
+                    <h2 class="text-base font-bold text-white flex items-center gap-2"><i class="fas fa-users text-amber-400"></i> 7 Shareholders Master Directory</h2>
                     <button onclick="addShareholder()" class="bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 font-bold px-3 py-1.5 rounded-xl text-xs"><i class="fas fa-plus"></i> Add Shareholder</button>
                 </div>
 
                 <div class="table-scroll-container">
-                    <table class="w-full text-left border-collapse min-w-[700px]">
+                    <table class="w-full text-left border-collapse min-w-[600px]">
                         <thead>
                             <tr class="bg-slate-900 text-slate-400 text-xs uppercase font-bold border-b border-slate-700">
                                 <th class="p-3">Shareholder Name</th>
                                 <th class="p-3 text-right">Capital Invested (Rs)</th>
-                                <th class="p-3 text-right">Share %</th>
-                                <th class="p-3 text-right">Total Net Dividend (Rs)</th>
+                                <th class="p-3 text-right">Default Base Share %</th>
                                 <th class="p-3 text-center no-print">Actions</th>
                             </tr>
                         </thead>
@@ -281,25 +264,32 @@
                     </table>
                 </div>
 
-                <!-- Project-Wise Profit Distribution View -->
-                <div class="pt-6 border-t border-slate-800 space-y-3">
-                    <h3 class="text-sm font-bold text-cyan-400 flex items-center gap-2"><i class="fas fa-sitemap"></i> Project-Wise Shareholder Profit Allocation</h3>
-                    <div id="project-wise-shares-container" class="space-y-4"></div>
+                <!-- Custom Project Share & Retention Allocation Module -->
+                <div class="pt-6 border-t border-slate-800 space-y-4">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <h3 class="text-sm font-bold text-cyan-400 flex items-center gap-2"><i class="fas fa-sitemap"></i> Custom Project-Specific Share & Retention Allocator</h3>
+                            <p class="text-xs text-slate-400">එක් එක් Project එකට අදාළව Shareholders ලාගේ Share % එක සහ Company Reserve % වෙන වෙනම Edit කිරීමට පල්ලෙහා Dropdown එකෙන් Project එක තෝරන්න.</p>
+                        </div>
+                        <select id="shareProjectSelect" onchange="renderCustomProjectShares()" class="rounded-xl p-2.5 text-xs neo-input w-full sm:w-64 font-bold text-amber-400"></select>
+                    </div>
+
+                    <div id="custom-project-share-editor" class="p-5 bg-slate-900/90 rounded-2xl border border-slate-800 space-y-4"></div>
                 </div>
             </div>
         </div>
 
-        <!-- TAB 3: PROJECT MANAGEMENT & BOND EXPIRY -->
+        <!-- TAB 3: PROJECT MANAGEMENT & FLEXIBLE BOND TYPES -->
         <div id="tab-projects" class="tab-content hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Add / Edit Project Form -->
+                <!-- Form -->
                 <div class="lg:col-span-5 no-print erp-card p-6 space-y-4">
-                    <h2 class="text-base font-bold text-white border-b border-slate-700/60 pb-3 flex items-center gap-2" id="project-form-title"><i class="fas fa-folder-plus text-cyan-400"></i> Add Construction Project</h2>
+                    <h2 class="text-base font-bold text-white border-b border-slate-700/60 pb-3 flex items-center gap-2" id="project-form-title"><i class="fas fa-folder-plus text-cyan-400"></i> Add / Edit Construction Project</h2>
                     <form id="project-form" class="space-y-3">
                         <input type="hidden" id="editProjectIndex" value="-1">
                         <div>
                             <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Project Title / Location</label>
-                            <input type="text" id="pTitle" placeholder="e.g. Commercial Building - Colombo 03" class="w-full rounded-xl p-2.5 text-xs neo-input" required>
+                            <input type="text" id="pTitle" placeholder="e.g. Luxury Apartment - Colombo 07" class="w-full rounded-xl p-2.5 text-xs neo-input" required>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
@@ -327,28 +317,36 @@
                             </div>
                         </div>
                         <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-2">
-                            <span class="text-xs font-bold text-amber-400 flex items-center gap-1.5"><i class="fas fa-shield-cat"></i> Performance Guarantee / Bond Details</span>
-                            <div class="grid grid-cols-2 gap-2">
-                                <input type="number" id="pBondValue" min="0" step="any" placeholder="Bond Value (Rs)" class="w-full rounded-xl p-2 text-xs font-mono neo-input">
-                                <input type="date" id="pBondExpiry" class="w-full rounded-xl p-2 text-xs neo-input">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-amber-400 flex items-center gap-1.5"><i class="fas fa-shield-cat"></i> Guarantee / Bond Details</span>
+                                <label class="text-[11px] text-slate-400 flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" id="pNoBondCheck" onchange="toggleBondInputs()" class="rounded"> No Bond Required
+                                </label>
+                            </div>
+                            <div id="bondInputsBox" class="space-y-2">
+                                <input type="text" id="pBondType" placeholder="Bond Type (e.g. Performance Guarantee / Bid Bond)" class="w-full rounded-xl p-2 text-xs neo-input">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <input type="number" id="pBondValue" min="0" step="any" placeholder="Bond Value (Rs)" class="w-full rounded-xl p-2 text-xs font-mono neo-input">
+                                    <input type="date" id="pBondExpiry" class="w-full rounded-xl p-2 text-xs neo-input">
+                                </div>
                             </div>
                         </div>
                         <button type="submit" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-black py-3 rounded-xl text-xs">
-                            <i class="fas fa-save"></i> Save Project Details
+                            <i class="fas fa-save"></i> Save Project
                         </button>
                     </form>
                 </div>
 
-                <!-- Projects List -->
+                <!-- Projects Directory Table -->
                 <div class="lg:col-span-7 erp-card p-6 space-y-4">
-                    <h2 class="text-base font-bold text-white border-b border-slate-700/60 pb-3 flex items-center gap-2"><i class="fas fa-list-check text-emerald-400"></i> Active Projects & Bond Alert Directory</h2>
+                    <h2 class="text-base font-bold text-white border-b border-slate-700/60 pb-3 flex items-center gap-2"><i class="fas fa-list-check text-emerald-400"></i> Active Projects & Bond Expiry Directory</h2>
                     <div class="table-scroll-container">
                         <table class="w-full text-left border-collapse min-w-[650px]">
                             <thead>
                                 <tr class="bg-slate-900 text-slate-400 text-xs uppercase font-bold border-b border-slate-700">
                                     <th class="p-3">Project Title & Source</th>
                                     <th class="p-3 text-right">Contract Value</th>
-                                    <th class="p-3 text-center">Dates & Bond Expiry</th>
+                                    <th class="p-3 text-center">Dates & Bond Details</th>
                                     <th class="p-3 text-center no-print">Actions</th>
                                 </tr>
                             </thead>
@@ -359,23 +357,22 @@
             </div>
         </div>
 
-        <!-- TAB 4: CONTRACTORS & SUPPLIERS DIRECTORY -->
+        <!-- TAB 4: CONTRACTOR/SUPPLIER AUTO-BALANCE & CUMULATIVE INVOICE -->
         <div id="tab-contractors" class="tab-content hidden space-y-6">
-            <!-- Filter Project Dropdown -->
             <div class="erp-card p-4 border-l-4 border-l-amber-400 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div>
-                    <h3 class="font-extrabold text-white text-sm"><i class="fas fa-filter text-amber-400 mr-2"></i>Filter Expenses & Payables by Project</h3>
-                    <p class="text-xs text-slate-400">තෝරාගන්නා Project එකට අදාළ Estimates සහ Payments පමණක් නැරඹීමට පල්ලෙහා Dropdown එක භාවිතා කරන්න</p>
+                    <h3 class="font-extrabold text-white text-sm"><i class="fas fa-filter text-amber-400 mr-2"></i>Filter Contractor / Supplier Ledger by Project</h3>
+                    <p class="text-xs text-slate-400">තෝරාගන්නා Project එකට අදාළ Payments සහ Balance පමණක් වෙනම නිරීක්ෂණය කිරීමට පල්ලෙහා Dropdown එක භාවිතා කරන්න</p>
                 </div>
                 <select id="filterProjectSelect" onchange="renderExpensesTable()" class="rounded-xl p-2.5 text-xs neo-input w-full sm:w-64 font-bold">
-                    <option value="ALL">Show ALL Projects Expenses</option>
+                    <option value="ALL">Show ALL Projects Ledger</option>
                 </select>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Payment / Expense Entry Form -->
+                <!-- Entry Form -->
                 <div class="lg:col-span-5 no-print erp-card p-6 space-y-4">
-                    <h2 class="text-base font-bold text-white border-b border-slate-700/60 pb-3 flex items-center gap-2" id="expense-form-title"><i class="fas fa-file-invoice-dollar text-rose-400"></i> Add Contractor / Supplier Ledger Entry</h2>
+                    <h2 class="text-base font-bold text-white border-b border-slate-700/60 pb-3 flex items-center gap-2" id="expense-form-title"><i class="fas fa-file-invoice-dollar text-rose-400"></i> Add Contractor / Supplier Payment Entry</h2>
                     <form id="expense-form" class="space-y-3">
                         <input type="hidden" id="editExpenseIndex" value="-1">
                         <div>
@@ -384,21 +381,21 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Contractor / Supplier / Payee Name</label>
-                            <input type="text" id="expName" placeholder="e.g. Tokyo Cement PLC / Masonry Sub-Contractor" class="w-full rounded-xl p-2.5 text-xs neo-input" required>
+                            <input type="text" id="expName" placeholder="e.g. Tokyo Cement PLC / Sub-Contractor Kumara" class="w-full rounded-xl p-2.5 text-xs neo-input" required>
                         </div>
-                        <div class="grid grid-cols-3 gap-2">
+                        <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Estimated (Rs)</label>
-                                <input type="number" id="expEst" min="0" step="any" placeholder="0.00" class="w-full rounded-xl p-2.5 text-xs font-mono neo-input" required>
+                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Estimate Amount (Rs)</label>
+                                <input type="number" id="expEst" min="0" step="any" oninput="autoCalcExpenseBalance()" placeholder="0.00" class="w-full rounded-xl p-2.5 text-xs font-mono neo-input" required>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Paid (Rs)</label>
-                                <input type="number" id="expPaid" min="0" step="any" placeholder="0.00" class="w-full rounded-xl p-2.5 text-xs font-mono neo-input" required>
+                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Paid Amount (Rs)</label>
+                                <input type="number" id="expPaid" min="0" step="any" oninput="autoCalcExpenseBalance()" placeholder="0.00" class="w-full rounded-xl p-2.5 text-xs font-mono neo-input" required>
                             </div>
-                            <div>
-                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Balance (Rs)</label>
-                                <input type="number" id="expPending" min="0" step="any" placeholder="0.00" class="w-full rounded-xl p-2.5 text-xs font-mono neo-input" required>
-                            </div>
+                        </div>
+                        <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 flex justify-between items-center">
+                            <span class="text-xs text-slate-400 font-bold">Auto Calculated Balance Due:</span>
+                            <span class="text-sm font-black text-rose-400 font-mono">Rs. <span id="expBalancePreview">0.00</span></span>
                         </div>
                         <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-slate-950 font-black py-3 rounded-xl text-xs">
                             <i class="fas fa-save"></i> Save Ledger Entry
@@ -406,9 +403,9 @@
                     </form>
                 </div>
 
-                <!-- Expense Records Table -->
+                <!-- Expense Records Directory -->
                 <div class="lg:col-span-7 erp-card p-6 space-y-4">
-                    <h2 class="text-base font-bold text-white border-b border-slate-700/60 pb-3 flex items-center gap-2"><i class="fas fa-receipt text-purple-400"></i> Project Expense & Payable Directory</h2>
+                    <h2 class="text-base font-bold text-white border-b border-slate-700/60 pb-3 flex items-center gap-2"><i class="fas fa-receipt text-purple-400"></i> Project Ledger & Cumulative Invoice Generator</h2>
                     <div class="table-scroll-container">
                         <table class="w-full text-left border-collapse min-w-[600px]">
                             <thead>
@@ -417,7 +414,7 @@
                                     <th class="p-3 text-right">Estimate</th>
                                     <th class="p-3 text-right">Paid</th>
                                     <th class="p-3 text-right">Balance Due</th>
-                                    <th class="p-3 text-center no-print">Actions</th>
+                                    <th class="p-3 text-center no-print">Actions & Invoice</th>
                                 </tr>
                             </thead>
                             <tbody id="expense-table-body" class="text-xs divide-y divide-slate-800"></tbody>
@@ -427,16 +424,135 @@
             </div>
         </div>
 
+        <!-- TAB 5: OFFICE OVERHEAD EXPENSES -->
+        <div id="tab-overhead" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Overhead Form -->
+                <div class="lg:col-span-5 no-print erp-card p-6 space-y-4">
+                    <h2 class="text-base font-bold text-white border-b border-slate-700/60 pb-3 flex items-center gap-2" id="overhead-form-title"><i class="fas fa-building-user text-purple-400"></i> Add Office Overhead Expense</h2>
+                    <form id="overhead-form" class="space-y-3">
+                        <input type="hidden" id="editOverheadIndex" value="-1">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Expense Category / Type</label>
+                            <select id="ohCategory" class="w-full rounded-xl p-2.5 text-xs neo-input" required>
+                                <option value="Office Rent">Office Building Rent</option>
+                                <option value="Electricity Bill">Electricity Bill</option>
+                                <option value="Water Bill">Water Bill</option>
+                                <option value="Staff Salaries & Allowances">Staff Salaries & Allowances</option>
+                                <option value="Internet & Telephone">Internet & Telephone</option>
+                                <option value="Stationery & Printing">Stationery & Printing</option>
+                                <option value="Other Overheads">Other Maintenance / Overheads</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Description / Voucher Note</label>
+                            <input type="text" id="ohDesc" placeholder="e.g. Head Office Electricity Bill - August" class="w-full rounded-xl p-2.5 text-xs neo-input" required>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Date</label>
+                                <input type="date" id="ohDate" class="w-full rounded-xl p-2.5 text-xs neo-input" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Amount (Rs)</label>
+                                <input type="number" id="ohAmount" min="0" step="any" placeholder="0.00" class="w-full rounded-xl p-2.5 text-xs font-mono neo-input" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-black py-3 rounded-xl text-xs">
+                            <i class="fas fa-save"></i> Save Overhead Expense
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Overhead Records Table -->
+                <div class="lg:col-span-7 erp-card p-6 space-y-4">
+                    <div class="flex justify-between items-center border-b border-slate-700/60 pb-3">
+                        <h2 class="text-base font-bold text-white flex items-center gap-2"><i class="fas fa-list-check text-purple-400"></i> Office Overhead Expenses Summary</h2>
+                        <span class="text-xs font-mono text-rose-400 font-bold bg-rose-500/10 px-3 py-1 rounded-lg border border-rose-500/20">Total: Rs. <span id="overhead-total-label">0.00</span></span>
+                    </div>
+                    <div class="table-scroll-container">
+                        <table class="w-full text-left border-collapse min-w-[550px]">
+                            <thead>
+                                <tr class="bg-slate-900 text-slate-400 text-xs uppercase font-bold border-b border-slate-700">
+                                    <th class="p-3">Category & Note</th>
+                                    <th class="p-3 text-center">Date</th>
+                                    <th class="p-3 text-right">Amount (Rs)</th>
+                                    <th class="p-3 text-center no-print">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="overhead-table-body" class="text-xs divide-y divide-slate-800"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 6: UPCOMING & BALANCE PAYMENTS MONITOR -->
+        <div id="tab-upcoming" class="tab-content hidden space-y-6">
+            <div class="erp-card p-6 space-y-4">
+                <div class="border-b border-slate-700/60 pb-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h2 class="text-base font-bold text-white flex items-center gap-2"><i class="fas fa-calendar-check text-amber-400"></i> Upcoming Financial Obligations & Pending Balances</h2>
+                        <p class="text-xs text-slate-400">ඉදිරියට ගෙවීමට ඇති සියලුම Supplier/Contractor Balances එකම තැනකින් Monitor කිරීමට මෙතැනින් හැක.</p>
+                    </div>
+                    <button onclick="window.print()" class="bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold px-3.5 py-2 rounded-xl text-xs"><i class="fas fa-file-pdf"></i> Print Upcoming Summary Report</button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="p-4 bg-slate-900 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 uppercase font-bold">Total Pending Supplier Payables</span>
+                        <div class="text-xl font-mono text-rose-400 font-bold mt-1">Rs. <span id="upcoming-total-payables">0.00</span></div>
+                    </div>
+                    <div class="p-4 bg-slate-900 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 uppercase font-bold">Pending Projects Count</span>
+                        <div class="text-xl font-mono text-cyan-400 font-bold mt-1"><span id="upcoming-project-count">0</span> Projects</div>
+                    </div>
+                    <div class="p-4 bg-slate-900 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 uppercase font-bold">Expiring Bonds Warning</span>
+                        <div class="text-xl font-mono text-amber-400 font-bold mt-1"><span id="upcoming-bond-warning-count">0</span> Bonds</div>
+                    </div>
+                </div>
+
+                <div class="table-scroll-container">
+                    <table class="w-full text-left border-collapse min-w-[650px]">
+                        <thead>
+                            <tr class="bg-slate-900 text-slate-400 text-xs uppercase font-bold border-b border-slate-700">
+                                <th class="p-3">Project Title</th>
+                                <th class="p-3">Payee / Supplier Name</th>
+                                <th class="p-3 text-right">Original Estimate</th>
+                                <th class="p-3 text-right">Already Paid</th>
+                                <th class="p-3 text-right">Required Balance Due</th>
+                            </tr>
+                        </thead>
+                        <tbody id="upcoming-table-body" class="text-xs divide-y divide-slate-800"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <!-- COPYRIGHT FOOTER STATEMENT -->
         <footer class="erp-card p-4 text-center text-xs text-slate-500 space-y-1 no-print">
             <div class="flex justify-center gap-4 font-semibold text-slate-400">
-                <span><i class="fas fa-shield-halved text-amber-400"></i> Expert Build Security Engine</span>
+                <span><i class="fas fa-shield-halved text-amber-400"></i> Expert Build Security System</span>
                 <span>•</span>
                 <span><i class="fab fa-google-drive text-emerald-400"></i> Cloud Drive Sync Enabled</span>
             </div>
-            <p>© 2026 <strong>Expert Build Solution (Pvt) Ltd</strong>. All Rights Reserved. Engineered for Construction Operations.</p>
+            <p>© 2026 <strong>Expert Build Solution (Pvt) Ltd</strong>. All Rights Reserved. Engineered for Construction & Financial Operations.</p>
         </footer>
 
+    </div>
+
+    <!-- CUMULATIVE INVOICE MODAL -->
+    <div id="invoice-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden">
+        <div class="w-full max-w-2xl erp-card p-6 bg-slate-900 text-slate-100 border border-amber-500/30 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div id="printable-invoice-content" class="space-y-4 p-4 bg-white text-slate-950 rounded-xl">
+                <!-- Dynamic Invoice Content -->
+            </div>
+            <div class="flex justify-end gap-2 no-print">
+                <button onclick="printInvoice()" class="bg-emerald-600 text-white font-bold px-4 py-2 rounded-xl text-xs"><i class="fas fa-print"></i> Print Invoice PDF</button>
+                <button onclick="closeInvoiceModal()" class="bg-slate-800 text-slate-300 font-bold px-4 py-2 rounded-xl text-xs">Close</button>
+            </div>
+        </div>
     </div>
 
     <!-- 1. ANTI-COPY & ANTI-INSPECT SECURITY SCRIPT -->
@@ -493,12 +609,12 @@
 
     <!-- 3. GOOGLE DRIVE APPDATA AUTO-SYNC ENGINE -->
     <script>
-        const GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"; 
-        const SCOPES = "121225169916-0ep54f7ls5ht5u972p7b2qdfttjug54r.apps.googleusercontent.com";
+        const GOOGLE_CLIENT_ID = "121225169916-0ep54f7ls5ht5u972p7b2qdfttjug54r.apps.googleusercontent.com"; 
+        const SCOPES = "https://www.googleapis.com/auth/drive.appdata";
 
         let tokenClient;
-        let gAccessToken = localStorage.getItem('g_drive_token_ebs_v2') || null;
-        let driveFileId = localStorage.getItem('g_drive_file_id_ebs_v2') || null;
+        let gAccessToken = localStorage.getItem('g_drive_token_ebs_v3') || null;
+        let driveFileId = localStorage.getItem('g_drive_file_id_ebs_v3') || null;
 
         function initGoogleDriveAuth() {
             if (typeof google === 'undefined' || !google.accounts) return;
@@ -509,7 +625,7 @@
                 callback: async (response) => {
                     if (response.access_token) {
                         gAccessToken = response.access_token;
-                        localStorage.setItem('g_drive_token_ebs_v2', gAccessToken);
+                        localStorage.setItem('g_drive_token_ebs_v3', gAccessToken);
                         updateSyncBadge('sync-success', '<i class="fa-solid fa-cloud-check"></i> Google Drive Synced');
                         await fetchOrInitDriveData();
                     }
@@ -532,21 +648,21 @@
         async function fetchOrInitDriveData() {
             if (!gAccessToken) return;
             try {
-                let res = await fetch("https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name='ebs_erp_v2_backup.json'", {
+                let res = await fetch("https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name='ebs_erp_v3_backup.json'", {
                     headers: { 'Authorization': `Bearer ${gAccessToken}` }
                 });
                 let data = await res.json();
                 if (data.files && data.files.length > 0) {
                     driveFileId = data.files[0].id;
-                    localStorage.setItem('g_drive_file_id_ebs_v2', driveFileId);
+                    localStorage.setItem('g_drive_file_id_ebs_v3', driveFileId);
                     await downloadDriveData(driveFileId);
                 } else { await createDriveFile(); }
             } catch (err) { console.log("Drive Fetch Error:", err); }
         }
 
         async function createDriveFile() {
-            const fileMetadata = { name: 'ebs_erp_v2_backup.json', parents: ['appDataFolder'] };
-            const payload = { shareholders: shareholders, companyRetentionPct: companyRetentionPct, projects: projects, expenses: projectExpenses };
+            const fileMetadata = { name: 'ebs_erp_v3_backup.json', parents: ['appDataFolder'] };
+            const payload = { shareholders: shareholders, projects: projects, expenses: projectExpenses, overheads: officeOverheads, projectConfig: projectConfig };
 
             const form = new FormData();
             form.append('metadata', new Blob([JSON.stringify(fileMetadata)], { type: 'application/json' }));
@@ -560,7 +676,7 @@
             let file = await res.json();
             if (file.id) {
                 driveFileId = file.id;
-                localStorage.setItem('g_drive_file_id_ebs_v2', driveFileId);
+                localStorage.setItem('g_drive_file_id_ebs_v3', driveFileId);
             }
         }
 
@@ -570,7 +686,7 @@
 
             try {
                 updateSyncBadge('sync-loading', '<i class="fa-solid fa-spinner fa-spin"></i> Syncing...');
-                const payload = { shareholders: shareholders, companyRetentionPct: companyRetentionPct, projects: projects, expenses: projectExpenses };
+                const payload = { shareholders: shareholders, projects: projects, expenses: projectExpenses, overheads: officeOverheads, projectConfig: projectConfig };
 
                 await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
                     method: 'PATCH',
@@ -590,9 +706,10 @@
                 let data = await res.json();
                 if (data) {
                     if(data.shareholders) shareholders = data.shareholders;
-                    if(data.companyRetentionPct !== undefined) companyRetentionPct = data.companyRetentionPct;
                     if(data.projects) projects = data.projects;
                     if(data.expenses) projectExpenses = data.expenses;
+                    if(data.overheads) officeOverheads = data.overheads;
+                    if(data.projectConfig) projectConfig = data.projectConfig;
                     saveLocal();
                     renderAll();
                 }
@@ -605,7 +722,7 @@
     <!-- 4. CORE UPGRADED EBS ERP LOGIC -->
     <script>
         const DEFAULT_PIN = "1234";
-        let userPIN = localStorage.getItem('ebsErpPIN_v2') || DEFAULT_PIN;
+        let userPIN = localStorage.getItem('ebsErpPIN_v3') || DEFAULT_PIN;
 
         const loginScreen = document.getElementById('login-screen');
         const appScreen = document.getElementById('app-screen');
@@ -613,12 +730,12 @@
         const pinInput = document.getElementById('pin-input');
         const loginError = document.getElementById('login-error');
 
-        if (sessionStorage.getItem('isEbsLoggedIn_v2') === 'true') { showApp(); }
+        if (sessionStorage.getItem('isEbsLoggedIn_v3') === 'true') { showApp(); }
 
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             if (pinInput.value === userPIN) {
-                sessionStorage.setItem('isEbsLoggedIn_v2', 'true');
+                sessionStorage.setItem('isEbsLoggedIn_v3', 'true');
                 loginError.classList.add('hidden');
                 showApp();
             } else {
@@ -633,7 +750,7 @@
             renderAll();
         }
 
-        function logout() { sessionStorage.removeItem('isEbsLoggedIn_v2'); location.reload(); }
+        function logout() { sessionStorage.removeItem('isEbsLoggedIn_v3'); location.reload(); }
 
         function changePIN() {
             const current = prompt("Enter Current PIN:");
@@ -641,7 +758,7 @@
                 const newPIN = prompt("Enter NEW PIN (Min 4 digits):");
                 if (newPIN && newPIN.trim().length >= 4) {
                     userPIN = newPIN.trim();
-                    localStorage.setItem('ebsErpPIN_v2', userPIN);
+                    localStorage.setItem('ebsErpPIN_v3', userPIN);
                     alert("PIN Changed Successfully!");
                 } else { alert("PIN must be at least 4 digits!"); }
             } else if (current !== null) { alert("Current PIN Incorrect!"); }
@@ -656,46 +773,51 @@
 
         // DEFAULT 7 SHAREHOLDERS
         let defaultShareholders = [
-            { name: "Shareholder 1", capital: 0, sharePct: 14.28 },
-            { name: "Shareholder 2", capital: 0, sharePct: 14.28 },
-            { name: "Shareholder 3", capital: 0, sharePct: 14.28 },
-            { name: "Shareholder 4", capital: 0, sharePct: 14.28 },
-            { name: "Shareholder 5", capital: 0, sharePct: 14.28 },
-            { name: "Shareholder 6", capital: 0, sharePct: 14.28 },
-            { name: "Shareholder 7", capital: 0, sharePct: 14.32 }
+            { name: "Shareholder 1", capital: 0, defaultPct: 14.28 },
+            { name: "Shareholder 2", capital: 0, defaultPct: 14.28 },
+            { name: "Shareholder 3", capital: 0, defaultPct: 14.28 },
+            { name: "Shareholder 4", capital: 0, defaultPct: 14.28 },
+            { name: "Shareholder 5", capital: 0, defaultPct: 14.28 },
+            { name: "Shareholder 6", capital: 0, defaultPct: 14.28 },
+            { name: "Shareholder 7", capital: 0, defaultPct: 14.32 }
         ];
 
-        let shareholders = JSON.parse(localStorage.getItem('ebsShareholdersV2')) || defaultShareholders;
-        let companyRetentionPct = parseFloat(localStorage.getItem('ebsCompanyRetentionV2')) || 10; // Default 10%
-        let projects = JSON.parse(localStorage.getItem('ebsProjectsV2')) || [];
-        let projectExpenses = JSON.parse(localStorage.getItem('ebsExpensesV2')) || [];
-        let shareChart = null;
+        let shareholders = JSON.parse(localStorage.getItem('ebsShareholdersV3')) || defaultShareholders;
+        let projects = JSON.parse(localStorage.getItem('ebsProjectsV3')) || [];
+        let projectExpenses = JSON.parse(localStorage.getItem('ebsExpensesV3')) || [];
+        let officeOverheads = JSON.parse(localStorage.getItem('ebsOverheadsV3')) || [];
+        let projectConfig = JSON.parse(localStorage.getItem('ebsProjectConfigV3')) || {}; // Store custom retention & custom shares per project
 
+        let growthChart = null;
         const formatMoney = (num) => Number(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
         function saveLocal() {
-            localStorage.setItem('ebsShareholdersV2', JSON.stringify(shareholders));
-            localStorage.setItem('ebsCompanyRetentionV2', companyRetentionPct);
-            localStorage.setItem('ebsProjectsV2', JSON.stringify(projects));
-            localStorage.setItem('ebsExpensesV2', JSON.stringify(projectExpenses));
+            localStorage.setItem('ebsShareholdersV3', JSON.stringify(shareholders));
+            localStorage.setItem('ebsProjectsV3', JSON.stringify(projects));
+            localStorage.setItem('ebsExpensesV3', JSON.stringify(projectExpenses));
+            localStorage.setItem('ebsOverheadsV3', JSON.stringify(officeOverheads));
+            localStorage.setItem('ebsProjectConfigV3', JSON.stringify(projectConfig));
         }
 
         function saveAndSync() { saveLocal(); syncToDrive(); }
 
-        function saveCompanyRetention() {
-            const val = parseFloat(document.getElementById('companyRetentionInput').value);
-            if (!isNaN(val) && val >= 0 && val <= 100) {
-                companyRetentionPct = val;
-                saveAndSync();
-                renderAll();
-                alert(`Company Retention Policy updated to ${companyRetentionPct}%!`);
-            } else { alert("Please enter a valid percentage between 0 and 100."); }
+        function toggleBondInputs() {
+            const noBond = document.getElementById('pNoBondCheck').checked;
+            document.getElementById('bondInputsBox').style.display = noBond ? 'none' : 'block';
+        }
+
+        function autoCalcExpenseBalance() {
+            const est = parseFloat(document.getElementById('expEst').value) || 0;
+            const paid = parseFloat(document.getElementById('expPaid').value) || 0;
+            const bal = est - paid;
+            document.getElementById('expBalancePreview').innerText = formatMoney(bal >= 0 ? bal : 0);
         }
 
         // Add / Edit Project
         document.getElementById('project-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const editIdx = parseInt(document.getElementById('editProjectIndex').value);
+            const noBond = document.getElementById('pNoBondCheck').checked;
 
             const projObj = {
                 title: document.getElementById('pTitle').value,
@@ -703,16 +825,23 @@
                 source: document.getElementById('pSource').value,
                 startDate: document.getElementById('pStartDate').value,
                 endDate: document.getElementById('pEndDate').value,
-                bondValue: parseFloat(document.getElementById('pBondValue').value) || 0,
-                bondExpiry: document.getElementById('pBondExpiry').value
+                noBond: noBond,
+                bondType: noBond ? 'No Bond Required' : (document.getElementById('pBondType').value || 'Performance Guarantee'),
+                bondValue: noBond ? 0 : (parseFloat(document.getElementById('pBondValue').value) || 0),
+                bondExpiry: noBond ? '' : document.getElementById('pBondExpiry').value
             };
 
             if (editIdx >= 0) { projects[editIdx] = projObj; } 
-            else { projects.push(projObj); }
+            else { 
+                projects.push(projObj); 
+                // Initialize default project config
+                projectConfig[projObj.title] = { retentionPct: 10, shares: {} };
+                shareholders.forEach(s => { projectConfig[projObj.title].shares[s.name] = s.defaultPct; });
+            }
 
             this.reset();
             document.getElementById('editProjectIndex').value = -1;
-            document.getElementById('project-form-title').innerHTML = `<i class="fas fa-folder-plus text-cyan-400"></i> Add Construction Project`;
+            toggleBondInputs();
             saveAndSync();
             renderAll();
         });
@@ -721,13 +850,16 @@
         document.getElementById('expense-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const editIdx = parseInt(document.getElementById('editExpenseIndex').value);
+            const est = parseFloat(document.getElementById('expEst').value) || 0;
+            const paid = parseFloat(document.getElementById('expPaid').value) || 0;
+            const pending = est - paid;
 
             const expObj = {
                 project: document.getElementById('expProject').value,
                 name: document.getElementById('expName').value,
-                est: parseFloat(document.getElementById('expEst').value) || 0,
-                paid: parseFloat(document.getElementById('expPaid').value) || 0,
-                pending: parseFloat(document.getElementById('expPending').value) || 0
+                est: est,
+                paid: paid,
+                pending: pending >= 0 ? pending : 0
             };
 
             if (editIdx >= 0) { projectExpenses[editIdx] = expObj; } 
@@ -735,98 +867,113 @@
 
             this.reset();
             document.getElementById('editExpenseIndex').value = -1;
-            document.getElementById('expense-form-title').innerHTML = `<i class="fas fa-file-invoice-dollar text-rose-400"></i> Add Contractor / Supplier Ledger Entry`;
+            document.getElementById('expBalancePreview').innerText = '0.00';
             saveAndSync();
             renderAll();
         });
 
-        function editProject(idx) {
-            const p = projects[idx];
-            document.getElementById('editProjectIndex').value = idx;
-            document.getElementById('pTitle').value = p.title;
-            document.getElementById('pValue').value = p.value;
-            document.getElementById('pSource').value = p.source;
-            document.getElementById('pStartDate').value = p.startDate;
-            document.getElementById('pEndDate').value = p.endDate;
-            document.getElementById('pBondValue').value = p.bondValue || '';
-            document.getElementById('pBondExpiry').value = p.bondExpiry || '';
-            document.getElementById('project-form-title').innerHTML = `<i class="fas fa-edit text-amber-400"></i> Edit Project Details`;
-        }
+        // Add / Edit Overhead
+        document.getElementById('overhead-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const editIdx = parseInt(document.getElementById('editOverheadIndex').value);
 
-        function editExpense(idx) {
-            const e = projectExpenses[idx];
-            document.getElementById('editExpenseIndex').value = idx;
-            document.getElementById('expProject').value = e.project;
-            document.getElementById('expName').value = e.name;
-            document.getElementById('expEst').value = e.est;
-            document.getElementById('expPaid').value = e.paid;
-            document.getElementById('expPending').value = e.pending;
-            document.getElementById('expense-form-title').innerHTML = `<i class="fas fa-edit text-amber-400"></i> Edit Ledger Entry`;
-        }
+            const ohObj = {
+                category: document.getElementById('ohCategory').value,
+                desc: document.getElementById('ohDesc').value,
+                date: document.getElementById('ohDate').value,
+                amount: parseFloat(document.getElementById('ohAmount').value) || 0
+            };
 
-        function editShareholder(idx) {
-            const s = shareholders[idx];
-            const newName = prompt("Edit Shareholder Name:", s.name);
-            if (newName && newName.trim() !== '') {
-                s.name = newName.trim();
-                const newCap = prompt(`"${s.name}" Capital Invested (Rs):`, s.capital);
-                if (newCap !== null && !isNaN(newCap)) s.capital = parseFloat(newCap);
-                const newPct = prompt(`"${s.name}" Custom Share Percentage (%):`, s.sharePct);
-                if (newPct !== null && !isNaN(newPct)) s.sharePct = parseFloat(newPct);
-                saveAndSync();
-                renderAll();
-            }
-        }
+            if (editIdx >= 0) { officeOverheads[editIdx] = ohObj; } 
+            else { officeOverheads.push(ohObj); }
 
-        function addShareholder() {
-            const name = prompt("Enter New Shareholder Name:");
-            if (name && name.trim() !== '') {
-                shareholders.push({ name: name.trim(), capital: 0, sharePct: 0 });
-                saveAndSync();
-                renderAll();
-            }
-        }
+            this.reset();
+            document.getElementById('editOverheadIndex').value = -1;
+            saveAndSync();
+            renderAll();
+        });
 
         function renderAll() {
-            document.getElementById('companyRetentionInput').value = companyRetentionPct;
-            document.getElementById('dash-retention-pct-label').innerText = companyRetentionPct;
-
             let totalCapital = shareholders.reduce((acc, curr) => acc + curr.capital, 0);
-            let totalProjectValue = projects.reduce((acc, curr) => acc + curr.value, 0);
-            let totalPaidExpenses = projectExpenses.reduce((acc, curr) => acc + curr.paid, 0);
+            let totalProjectIncome = projects.reduce((acc, curr) => acc + curr.value, 0);
+            let totalSiteExpenses = projectExpenses.reduce((acc, curr) => acc + curr.paid, 0);
             let totalPendingPayables = projectExpenses.reduce((acc, curr) => acc + curr.pending, 0);
+            let totalOfficeOverheads = officeOverheads.reduce((acc, curr) => acc + curr.amount, 0);
 
-            let totalNetProfit = totalProjectValue - (totalPaidExpenses + totalPendingPayables);
-            let totalCompanyRetentionMoney = totalNetProfit > 0 ? totalNetProfit * (companyRetentionPct / 100) : 0;
-            let totalDistributableDividends = totalNetProfit - totalCompanyRetentionMoney;
+            let totalAllExpenses = totalSiteExpenses + totalOfficeOverheads;
+            let netCompanyProfit = totalProjectIncome - totalAllExpenses;
 
-            // Dashboard Widgets
+            // Update Dashboard Overview Widgets
             document.getElementById('dash-capital').innerText = formatMoney(totalCapital);
-            document.getElementById('dash-retention').innerText = formatMoney(totalCompanyRetentionMoney);
-            document.getElementById('dash-payables').innerText = formatMoney(totalPendingPayables);
-            document.getElementById('dash-distributable').innerText = formatMoney(totalDistributableDividends);
-            document.getElementById('dash-project-count').innerText = projects.length;
+            document.getElementById('dash-income').innerText = formatMoney(totalProjectIncome);
+            document.getElementById('dash-expenses').innerText = formatMoney(totalAllExpenses);
+            document.getElementById('dash-net-profit').innerText = formatMoney(netCompanyProfit);
+            document.getElementById('overhead-total-label').innerText = formatMoney(totalOfficeOverheads);
 
-            // Render Dashboard Projects Table
-            const dashPBody = document.getElementById('dash-projects-body');
-            dashPBody.innerHTML = '';
+            // Populate Filter Dropdowns
+            populateDropdowns();
+
+            // Render Tables & Views
+            renderDashProjectsTable();
+            renderShareholdersTable();
+            renderCustomProjectShares();
+            renderProjectsTable();
+            renderExpensesTable();
+            renderOverheadsTable();
+            renderUpcomingTable();
+
+            renderGrowthChart(totalProjectIncome, totalSiteExpenses, totalOfficeOverheads, netCompanyProfit);
+        }
+
+        function populateDropdowns() {
+            const dFilter = document.getElementById('dashProjectFilterSelect');
+            const fSelect = document.getElementById('filterProjectSelect');
+            const pSelect = document.getElementById('expProject');
+            const sSelect = document.getElementById('shareProjectSelect');
+
+            const currDFilter = dFilter.value;
+            const currFFilter = fSelect.value;
+            const currSFilter = sSelect.value;
+
+            dFilter.innerHTML = `<option value="ALL">Show ALL Projects</option>`;
+            fSelect.innerHTML = `<option value="ALL">Show ALL Projects Ledger</option>`;
+            pSelect.innerHTML = '';
+            sSelect.innerHTML = '';
+
+            projects.forEach(p => {
+                dFilter.innerHTML += `<option value="${p.title}">${p.title}</option>`;
+                fSelect.innerHTML += `<option value="${p.title}">${p.title}</option>`;
+                pSelect.innerHTML += `<option value="${p.title}">${p.title}</option>`;
+                sSelect.innerHTML += `<option value="${p.title}">${p.title}</option>`;
+            });
+
+            if(currDFilter) dFilter.value = currDFilter;
+            if(currFFilter) fSelect.value = currFFilter;
+            if(currSFilter) sSelect.value = currSFilter;
+        }
+
+        function renderDashProjectsTable() {
+            const filterVal = document.getElementById('dashProjectFilterSelect').value;
+            const dBody = document.getElementById('dash-projects-body');
+            dBody.innerHTML = '';
             const today = new Date();
 
             projects.forEach(p => {
+                if (filterVal !== "ALL" && p.title !== filterVal) return;
+
                 let pExpenses = projectExpenses.filter(e => e.project === p.title).reduce((acc, curr) => acc + curr.paid + curr.pending, 0);
                 let pProfit = p.value - pExpenses;
-                let pCompanyRetention = pProfit > 0 ? pProfit * (companyRetentionPct / 100) : 0;
 
-                let bondStatusHtml = `<span class="text-slate-500 font-bold">No Bond</span>`;
-                if (p.bondExpiry) {
+                let bondStatusHtml = `<span class="text-slate-500 font-bold">No Bond Required</span>`;
+                if (!p.noBond && p.bondExpiry) {
                     let expDate = new Date(p.bondExpiry);
                     let diffDays = Math.ceil((expDate - today) / (1000 * 60 * 60 * 24));
                     if (diffDays < 0) {
-                        bondStatusHtml = `<span class="bond-expired px-2 py-0.5 rounded font-bold text-[10px]"><i class="fas fa-circle-exclamation"></i> EXPIRED (${p.bondExpiry})</span>`;
+                        bondStatusHtml = `<span class="bond-expired px-2 py-0.5 rounded font-bold text-[10px]"><i class="fas fa-circle-exclamation"></i> ${p.bondType || 'Bond'} EXPIRED (${p.bondExpiry})</span>`;
                     } else if (diffDays <= 30) {
-                        bondStatusHtml = `<span class="bond-warning px-2 py-0.5 rounded font-bold text-[10px]"><i class="fas fa-triangle-exclamation"></i> Expires in ${diffDays} Days</span>`;
+                        bondStatusHtml = `<span class="bond-warning px-2 py-0.5 rounded font-bold text-[10px]"><i class="fas fa-triangle-exclamation"></i> ${p.bondType || 'Bond'} Expires in ${diffDays} Days</span>`;
                     } else {
-                        bondStatusHtml = `<span class="text-emerald-400 font-bold text-[10px]"><i class="fas fa-circle-check"></i> Valid (${p.bondExpiry})</span>`;
+                        bondStatusHtml = `<span class="text-emerald-400 font-bold text-[10px]"><i class="fas fa-circle-check"></i> ${p.bondType || 'Bond'} Valid (${p.bondExpiry})</span>`;
                     }
                 }
 
@@ -837,90 +984,126 @@
                     <td class="p-3 text-right font-mono text-cyan-400">Rs. ${formatMoney(p.value)}</td>
                     <td class="p-3 text-right font-mono text-rose-400">Rs. ${formatMoney(pExpenses)}</td>
                     <td class="p-3 text-right font-mono text-emerald-400 font-bold">Rs. ${formatMoney(pProfit)}</td>
-                    <td class="p-3 text-right font-mono text-amber-400 font-bold">Rs. ${formatMoney(pCompanyRetention)}</td>
                     <td class="p-3 text-center">${bondStatusHtml}</td>
                 `;
-                dashPBody.appendChild(tr);
+                dBody.appendChild(tr);
             });
+        }
 
-            // Render Shareholders Table
+        function renderShareholdersTable() {
             const sBody = document.getElementById('shareholder-table-body');
             sBody.innerHTML = '';
             shareholders.forEach((s, idx) => {
-                let expectedDividend = totalDistributableDividends > 0 ? (totalDistributableDividends * (s.sharePct / 100)) : 0;
-
                 let tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-800/40 transition";
                 tr.innerHTML = `
                     <td class="p-3 font-bold text-white"><i class="fas fa-user-circle text-amber-400 mr-2"></i>${s.name}</td>
                     <td class="p-3 text-right font-mono text-cyan-400 font-bold">Rs. ${formatMoney(s.capital)}</td>
-                    <td class="p-3 text-right font-mono text-amber-400 font-bold">${s.sharePct}%</td>
-                    <td class="p-3 text-right font-mono text-emerald-400 font-bold">Rs. ${formatMoney(expectedDividend)}</td>
+                    <td class="p-3 text-right font-mono text-amber-400 font-bold">${s.defaultPct}%</td>
                     <td class="p-3 text-center no-print">
-                        <button onclick="editShareholder(${idx})" class="text-xs bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 px-2.5 py-1 rounded-lg font-bold hover:bg-indigo-600/50">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
+                        <button onclick="editShareholder(${idx})" class="text-xs bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 px-2.5 py-1 rounded-lg font-bold"><i class="fas fa-edit"></i> Edit Shareholder</button>
                         <button onclick="deleteShareholder(${idx})" class="text-xs text-rose-400 hover:text-rose-300 ml-2"><i class="fas fa-trash-alt"></i></button>
                     </td>
                 `;
                 sBody.appendChild(tr);
             });
+        }
 
-            // Render Project-Wise Shareholder Profit Allocation
-            const pwContainer = document.getElementById('project-wise-shares-container');
-            pwContainer.innerHTML = '';
-            projects.forEach(p => {
-                let pExpenses = projectExpenses.filter(e => e.project === p.title).reduce((acc, curr) => acc + curr.paid + curr.pending, 0);
-                let pProfit = p.value - pExpenses;
-                let pCompanyRetention = pProfit > 0 ? pProfit * (companyRetentionPct / 100) : 0;
-                let pDistributable = pProfit - pCompanyRetention;
+        function renderCustomProjectShares() {
+            const sSelect = document.getElementById('shareProjectSelect');
+            const selectedProjTitle = sSelect.value;
+            const editorBox = document.getElementById('custom-project-share-editor');
+            editorBox.innerHTML = '';
 
-                let div = document.createElement('div');
-                div.className = "p-4 bg-slate-900 rounded-xl border border-slate-800 space-y-2";
-                let html = `
-                    <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                        <span class="font-extrabold text-white text-xs">${p.title} (Net Profit: <span class="text-emerald-400 font-mono">Rs. ${formatMoney(pProfit)}</span>)</span>
-                        <span class="text-[11px] text-amber-400 font-bold">Company Reserve (${companyRetentionPct}%): Rs. ${formatMoney(pCompanyRetention)}</span>
+            if (!selectedProjTitle || projects.length === 0) {
+                editorBox.innerHTML = `<p class="text-xs text-slate-500 font-bold">කරුණාකර පළමුව Project එකක් එකතු කරන්න.</p>`;
+                return;
+            }
+
+            if (!projectConfig[selectedProjTitle]) {
+                projectConfig[selectedProjTitle] = { retentionPct: 10, shares: {} };
+                shareholders.forEach(s => { projectConfig[selectedProjTitle].shares[s.name] = s.defaultPct; });
+            }
+
+            const pCfg = projectConfig[selectedProjTitle];
+            const pObj = projects.find(p => p.title === selectedProjTitle);
+            let pExpenses = projectExpenses.filter(e => e.project === selectedProjTitle).reduce((acc, curr) => acc + curr.paid + curr.pending, 0);
+            let pProfit = (pObj ? pObj.value : 0) - pExpenses;
+
+            let html = `
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800 pb-3">
+                    <div>
+                        <h4 class="text-xs font-black text-white">${selectedProjTitle} - Profit Allocation Settings</h4>
+                        <p class="text-[11px] text-slate-400">Total Project Profit: <span class="font-mono text-emerald-400 font-bold">Rs. ${formatMoney(pProfit)}</span></p>
                     </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[11px]">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-amber-400 font-bold">Company Retention %:</span>
+                        <input type="number" id="curProjRetentionInput" value="${pCfg.retentionPct}" min="0" max="100" class="w-20 rounded-xl p-1.5 text-xs font-mono neo-input text-center">
+                        <button onclick="saveCustomProjRetention('${selectedProjTitle}')" class="bg-amber-500 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs">Save Reserve %</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+            `;
+
+            let compReserveMoney = pProfit > 0 ? pProfit * (pCfg.retentionPct / 100) : 0;
+            let distributableProfit = pProfit - compReserveMoney;
+
+            shareholders.forEach(s => {
+                let currentPct = pCfg.shares[s.name] !== undefined ? pCfg.shares[s.name] : s.defaultPct;
+                let sProfitShareMoney = distributableProfit > 0 ? distributableProfit * (currentPct / 100) : 0;
+
+                html += `
+                    <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center gap-2">
+                        <div>
+                            <span class="text-xs font-bold text-white block">${s.name}</span>
+                            <span class="text-[10px] text-emerald-400 font-mono font-bold">Earns: Rs. ${formatMoney(sProfitShareMoney)}</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <input type="number" id="sPct_${selectedProjTitle}_${s.name}" value="${currentPct}" min="0" max="100" class="w-16 rounded-lg p-1 text-xs font-mono neo-input text-center">
+                            <span class="text-xs text-slate-400 font-bold">%</span>
+                            <button onclick="saveIndividualSharePct('${selectedProjTitle}', '${s.name}')" class="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold px-2 py-1 rounded-lg text-[10px]">Set</button>
+                        </div>
+                    </div>
                 `;
-                shareholders.forEach(s => {
-                    let sShare = pDistributable > 0 ? pDistributable * (s.sharePct / 100) : 0;
-                    html += `<div class="p-2 bg-slate-950 rounded border border-slate-800/80"><span class="text-slate-400">${s.name}:</span> <span class="font-mono text-emerald-400 font-bold block">Rs. ${formatMoney(sShare)}</span></div>`;
-                });
-                html += `</div>`;
-                div.innerHTML = html;
-                pwContainer.appendChild(div);
             });
 
-            // Update Projects Dropdown and Filter Options
-            const pSelect = document.getElementById('expProject');
-            const fSelect = document.getElementById('filterProjectSelect');
-            pSelect.innerHTML = '';
-            
-            const currFilterVal = fSelect.value;
-            fSelect.innerHTML = `<option value="ALL">Show ALL Projects Expenses</option>`;
-            
-            projects.forEach(p => {
-                pSelect.innerHTML += `<option value="${p.title}">${p.title}</option>`;
-                fSelect.innerHTML += `<option value="${p.title}">${p.title}</option>`;
-            });
-            fSelect.value = currFilterVal;
+            html += `</div>`;
+            editorBox.innerHTML = html;
+        }
 
-            // Render Projects Table
+        function saveCustomProjRetention(pTitle) {
+            const val = parseFloat(document.getElementById('curProjRetentionInput').value) || 0;
+            projectConfig[pTitle].retentionPct = val;
+            saveAndSync();
+            renderAll();
+            alert(`Company Reserve Policy for "${pTitle}" set to ${val}%!`);
+        }
+
+        function saveIndividualSharePct(pTitle, sName) {
+            const val = parseFloat(document.getElementById(`sPct_${pTitle}_${sName}`).value) || 0;
+            projectConfig[pTitle].shares[sName] = val;
+            saveAndSync();
+            renderAll();
+            alert(`Share % for ${sName} in "${pTitle}" updated to ${val}%!`);
+        }
+
+        function renderProjectsTable() {
             const pBody = document.getElementById('project-table-body');
             pBody.innerHTML = '';
+            const today = new Date();
+
             projects.forEach((p, idx) => {
-                let bondStatusHtml = `<span class="text-slate-500 font-bold">No Bond</span>`;
-                if (p.bondExpiry) {
+                let bondStatusHtml = `<span class="text-slate-500 font-bold">No Bond Required</span>`;
+                if (!p.noBond && p.bondExpiry) {
                     let expDate = new Date(p.bondExpiry);
                     let diffDays = Math.ceil((expDate - today) / (1000 * 60 * 60 * 24));
                     if (diffDays < 0) {
-                        bondStatusHtml = `<span class="bond-expired px-2 py-0.5 rounded font-bold text-[10px]"><i class="fas fa-circle-exclamation"></i> EXPIRED</span>`;
+                        bondStatusHtml = `<span class="bond-expired px-2 py-0.5 rounded font-bold text-[10px]"><i class="fas fa-circle-exclamation"></i> ${p.bondType} EXPIRED</span>`;
                     } else if (diffDays <= 30) {
-                        bondStatusHtml = `<span class="bond-warning px-2 py-0.5 rounded font-bold text-[10px]"><i class="fas fa-triangle-exclamation"></i> Expires in ${diffDays} Days</span>`;
+                        bondStatusHtml = `<span class="bond-warning px-2 py-0.5 rounded font-bold text-[10px]"><i class="fas fa-triangle-exclamation"></i> ${p.bondType} (${diffDays} Days Left)</span>`;
                     } else {
-                        bondStatusHtml = `<span class="text-emerald-400 font-bold text-[10px]"><i class="fas fa-circle-check"></i> Valid</span>`;
+                        bondStatusHtml = `<span class="text-emerald-400 font-bold text-[10px]"><i class="fas fa-circle-check"></i> ${p.bondType} Valid</span>`;
                     }
                 }
 
@@ -937,9 +1120,6 @@
                 `;
                 pBody.appendChild(tr);
             });
-
-            renderExpensesTable();
-            renderChart();
         }
 
         function renderExpensesTable() {
@@ -957,34 +1137,212 @@
                     <td class="p-3 text-right font-mono text-slate-400">Rs. ${formatMoney(e.est || 0)}</td>
                     <td class="p-3 text-right font-mono text-emerald-400 font-bold">Rs. ${formatMoney(e.paid)}</td>
                     <td class="p-3 text-right font-mono text-rose-400 font-bold">Rs. ${formatMoney(e.pending)}</td>
-                    <td class="p-3 text-center no-print">
+                    <td class="p-3 text-center no-print flex justify-center gap-1">
+                        <button onclick="generatePayeeInvoice('${e.name}')" class="text-xs bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 px-2 py-1 rounded-lg font-bold" title="Generate Cumulative Invoice"><i class="fas fa-receipt"></i> Invoice</button>
                         <button onclick="editExpense(${idx})" class="text-xs bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 px-2 py-1 rounded-lg font-bold"><i class="fas fa-edit"></i> Edit</button>
-                        <button onclick="deleteExpense(${idx})" class="text-xs text-rose-400 hover:text-rose-300 ml-1"><i class="fas fa-trash-alt"></i></button>
+                        <button onclick="deleteExpense(${idx})" class="text-xs text-rose-400 hover:text-rose-300"><i class="fas fa-trash-alt"></i></button>
                     </td>
                 `;
                 eBody.appendChild(tr);
             });
         }
 
-        function renderChart() {
-            const ctx = document.getElementById('shareChart').getContext('2d');
-            if (shareChart) shareChart.destroy();
+        function renderOverheadsTable() {
+            const ohBody = document.getElementById('overhead-table-body');
+            ohBody.innerHTML = '';
 
-            const labels = shareholders.map(s => s.name);
-            const dataValues = shareholders.map(s => s.capital);
+            officeOverheads.forEach((o, idx) => {
+                let tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-800/40 transition";
+                tr.innerHTML = `
+                    <td class="p-3"><span class="font-bold text-white">${o.desc}</span><br><span class="text-[10px] text-purple-400 font-semibold">${o.category}</span></td>
+                    <td class="p-3 text-center font-mono text-slate-400">${o.date}</td>
+                    <td class="p-3 text-right font-mono text-rose-400 font-bold">Rs. ${formatMoney(o.amount)}</td>
+                    <td class="p-3 text-center no-print">
+                        <button onclick="editOverhead(${idx})" class="text-xs bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 px-2 py-1 rounded-lg font-bold"><i class="fas fa-edit"></i> Edit</button>
+                        <button onclick="deleteOverhead(${idx})" class="text-xs text-rose-400 hover:text-rose-300 ml-1"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                `;
+                ohBody.appendChild(tr);
+            });
+        }
 
-            shareChart = new Chart(ctx, {
-                type: 'doughnut',
+        function renderUpcomingTable() {
+            const uBody = document.getElementById('upcoming-table-body');
+            uBody.innerHTML = '';
+            let totalPayables = 0;
+
+            projectExpenses.forEach(e => {
+                if (e.pending > 0) {
+                    totalPayables += e.pending;
+                    let tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-800/40 transition";
+                    tr.innerHTML = `
+                        <td class="p-3 font-bold text-cyan-400">${e.project}</td>
+                        <td class="p-3 font-bold text-white">${e.name}</td>
+                        <td class="p-3 text-right font-mono text-slate-400">Rs. ${formatMoney(e.est)}</td>
+                        <td class="p-3 text-right font-mono text-emerald-400">Rs. ${formatMoney(e.paid)}</td>
+                        <td class="p-3 text-right font-mono text-rose-400 font-bold">Rs. ${formatMoney(e.pending)}</td>
+                    `;
+                    uBody.appendChild(tr);
+                }
+            });
+
+            document.getElementById('upcoming-total-payables').innerText = formatMoney(totalPayables);
+            document.getElementById('upcoming-project-count').innerText = projects.length;
+            
+            const today = new Date();
+            let warningBonds = projects.filter(p => !p.noBond && p.bondExpiry && (Math.ceil((new Date(p.bondExpiry) - today)/(1000*60*60*24)) <= 30)).length;
+            document.getElementById('upcoming-bond-warning-count').innerText = warningBonds;
+        }
+
+        function generatePayeeInvoice(payeeName) {
+            const payeeRecords = projectExpenses.filter(e => e.name === payeeName);
+            if (payeeRecords.length === 0) return;
+
+            let totalEst = payeeRecords.reduce((acc, curr) => acc + curr.est, 0);
+            let totalPaid = payeeRecords.reduce((acc, curr) => acc + curr.paid, 0);
+            let totalPending = payeeRecords.reduce((acc, curr) => acc + curr.pending, 0);
+
+            let html = `
+                <div class="text-center border-b-2 border-slate-950 pb-4">
+                    <h2 class="text-xl font-black tracking-tight text-slate-950 uppercase">EXPERT BUILD SOLUTION (PVT) LTD</h2>
+                    <p class="text-xs text-slate-600 font-bold">CUMULATIVE CONTRACTOR / SUPPLIER STATEMENT & INVOICE</p>
+                    <p class="text-[10px] text-slate-500 mt-1">Date Generated: ${new Date().toLocaleDateString()}</p>
+                </div>
+
+                <div class="p-3 bg-slate-100 rounded-lg text-xs space-y-1">
+                    <div><strong>Payee Name / Firm:</strong> ${payeeName}</div>
+                    <div><strong>Total Transactions Count:</strong> ${payeeRecords.length} Projects / Jobs</div>
+                </div>
+
+                <table class="w-full text-left text-xs border-collapse border border-slate-300">
+                    <thead>
+                        <tr class="bg-slate-200 text-slate-950 font-bold">
+                            <th class="p-2 border border-slate-300">Project</th>
+                            <th class="p-2 text-right border border-slate-300">Estimate Amount</th>
+                            <th class="p-2 text-right border border-slate-300">Already Paid</th>
+                            <th class="p-2 text-right border border-slate-300">Balance Due</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            payeeRecords.forEach(r => {
+                html += `
+                    <tr>
+                        <td class="p-2 border border-slate-300 font-bold">${r.project}</td>
+                        <td class="p-2 text-right border border-slate-300 font-mono">Rs. ${formatMoney(r.est)}</td>
+                        <td class="p-2 text-right border border-slate-300 font-mono">Rs. ${formatMoney(r.paid)}</td>
+                        <td class="p-2 text-right border border-slate-300 font-mono text-rose-600 font-bold">Rs. ${formatMoney(r.pending)}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+
+                <div class="p-3 bg-slate-200 rounded-lg text-xs space-y-1 text-right font-mono font-bold">
+                    <div>Total Estimated Value: Rs. ${formatMoney(totalEst)}</div>
+                    <div>Total Paid to Date: Rs. ${formatMoney(totalPaid)}</div>
+                    <div class="text-sm text-rose-700">NET CUMULATIVE BALANCE DUE: Rs. ${formatMoney(totalPending)}</div>
+                </div>
+
+                <div class="pt-8 flex justify-between text-[10px] text-slate-600 border-t border-slate-300">
+                    <div>Prepared By: EBS Accounts Dept.</div>
+                    <div>Authorized Signature: ______________________</div>
+                </div>
+            `;
+
+            document.getElementById('printable-invoice-content').innerHTML = html;
+            document.getElementById('invoice-modal').classList.remove('hidden');
+        }
+
+        function closeInvoiceModal() { document.getElementById('invoice-modal').classList.add('hidden'); }
+        function printInvoice() { window.print(); }
+
+        function renderGrowthChart(income, siteExp, overheads, netProfit) {
+            const ctx = document.getElementById('growthChart').getContext('2d');
+            if (growthChart) growthChart.destroy();
+
+            growthChart = new Chart(ctx, {
+                type: 'bar',
                 data: {
-                    labels: labels,
-                    datasets: [{ data: dataValues, backgroundColor: ['#f59e0b', '#06b6d4', '#8b5cf6', '#10b981', '#f43f5e', '#3b82f6', '#ec4899', '#a855f7'] }]
+                    labels: ['Projects Gross Income', 'Site Expenses', 'Office Overheads', 'Net Company Profit'],
+                    datasets: [{
+                        label: 'Financial Performance (Rs)',
+                        data: [income, siteExp, overheads, netProfit],
+                        backgroundColor: ['#06b6d4', '#f59e0b', '#8b5cf6', '#10b981']
+                    }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 10 } } } }
+                    plugins: { legend: { display: false } },
+                    scales: { y: { ticks: { color: '#94a3b8' } }, x: { ticks: { color: '#94a3b8' } } }
                 }
             });
+        }
+
+        function editProject(idx) {
+            const p = projects[idx];
+            document.getElementById('editProjectIndex').value = idx;
+            document.getElementById('pTitle').value = p.title;
+            document.getElementById('pValue').value = p.value;
+            document.getElementById('pSource').value = p.source;
+            document.getElementById('pStartDate').value = p.startDate;
+            document.getElementById('pEndDate').value = p.endDate;
+            document.getElementById('pNoBondCheck').checked = p.noBond || false;
+            document.getElementById('pBondType').value = p.bondType || '';
+            document.getElementById('pBondValue').value = p.bondValue || '';
+            document.getElementById('pBondExpiry').value = p.bondExpiry || '';
+            toggleBondInputs();
+            document.getElementById('project-form-title').innerHTML = `<i class="fas fa-edit text-amber-400"></i> Edit Project Details`;
+        }
+
+        function editExpense(idx) {
+            const e = projectExpenses[idx];
+            document.getElementById('editExpenseIndex').value = idx;
+            document.getElementById('expProject').value = e.project;
+            document.getElementById('expName').value = e.name;
+            document.getElementById('expEst').value = e.est;
+            document.getElementById('expPaid').value = e.paid;
+            autoCalcExpenseBalance();
+            document.getElementById('expense-form-title').innerHTML = `<i class="fas fa-edit text-amber-400"></i> Edit Ledger Entry`;
+        }
+
+        function editOverhead(idx) {
+            const o = officeOverheads[idx];
+            document.getElementById('editOverheadIndex').value = idx;
+            document.getElementById('ohCategory').value = o.category;
+            document.getElementById('ohDesc').value = o.desc;
+            document.getElementById('ohDate').value = o.date;
+            document.getElementById('ohAmount').value = o.amount;
+            document.getElementById('overhead-form-title').innerHTML = `<i class="fas fa-edit text-amber-400"></i> Edit Office Overhead Entry`;
+        }
+
+        function editShareholder(idx) {
+            const s = shareholders[idx];
+            const newName = prompt("Edit Shareholder Name:", s.name);
+            if (newName && newName.trim() !== '') {
+                s.name = newName.trim();
+                const newCap = prompt(`"${s.name}" Capital Invested (Rs):`, s.capital);
+                if (newCap !== null && !isNaN(newCap)) s.capital = parseFloat(newCap);
+                const newPct = prompt(`"${s.name}" Base Default Share %:`, s.defaultPct);
+                if (newPct !== null && !isNaN(newPct)) s.defaultPct = parseFloat(newPct);
+                saveAndSync();
+                renderAll();
+            }
+        }
+
+        function addShareholder() {
+            const name = prompt("Enter New Shareholder Name:");
+            if (name && name.trim() !== '') {
+                shareholders.push({ name: name.trim(), capital: 0, defaultPct: 0 });
+                saveAndSync();
+                renderAll();
+            }
         }
 
         function deleteShareholder(idx) {
@@ -1011,12 +1369,21 @@
             }
         }
 
+        function deleteOverhead(idx) {
+            if(confirm("Are you sure you want to delete this office overhead entry?")) {
+                officeOverheads.splice(idx, 1);
+                saveAndSync();
+                renderAll();
+            }
+        }
+
         function clearAllData() {
-            if(confirm("WARNING: This will reset all project and expense records. Continue?")) {
+            if(confirm("WARNING: This will reset all records. Continue?")) {
                 projects = [];
                 projectExpenses = [];
+                officeOverheads = [];
                 shareholders = defaultShareholders;
-                companyRetentionPct = 10;
+                projectConfig = {};
                 saveAndSync();
                 renderAll();
             }
